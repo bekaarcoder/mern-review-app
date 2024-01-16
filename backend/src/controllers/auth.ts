@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import User from '../models/User';
 import createHttpError from 'http-errors';
+import EmailVerificationToken from '../models/EmailVerificationToken';
 
 interface SignUpBody {
     username?: string;
@@ -35,6 +36,15 @@ export const signUp: RequestHandler<
             password,
         });
         await newUser.save();
+
+        // Generate OTP
+        const OTP = Math.floor(Math.random() * 900000 + 100000)
+
+        const newEmailVerificationToken = new EmailVerificationToken({
+            owner: newUser._id,
+            token: OTP
+        })
+        await newEmailVerificationToken.save()
 
         res.status(201).json(newUser);
     } catch (error) {
