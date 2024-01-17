@@ -1,5 +1,5 @@
-import { InferSchemaType, Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { InferSchemaType, Schema, model } from 'mongoose';
 
 const userSchema = new Schema({
     username: {
@@ -17,6 +17,11 @@ const userSchema = new Schema({
         type: String,
         required: true,
         select: false,
+    },
+    isVerified: {
+        type: Boolean,
+        require: true,
+        default: false,
     },
 });
 

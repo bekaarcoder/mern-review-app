@@ -1,7 +1,14 @@
-import { InferSchemaType, Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { Document, Schema, model } from 'mongoose';
 
-const emailVerificationTokenSchema = new Schema({
+interface EmailVerificationToken extends Document {
+    owner: Schema.Types.ObjectId;
+    token: string;
+    createdAt: Date;
+    compareToken(token: string): Promise<boolean>;
+}
+
+const emailVerificationTokenSchema = new Schema<EmailVerificationToken>({
     owner: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -26,9 +33,16 @@ emailVerificationTokenSchema.pre('save', async function (next) {
     next();
 });
 
-type EmailVerificationToken = InferSchemaType<
-    typeof emailVerificationTokenSchema
->;
+emailVerificationTokenSchema.methods.compareToken = async function (
+    token: string
+) {
+    const result = await bcrypt.compare(token, this.token);
+    return result;
+};
+
+// type EmailVerificationToken = InferSchemaType<
+//     typeof emailVerificationTokenSchema
+// >;
 
 export default model<EmailVerificationToken>(
     'EmailVerificationToken',
