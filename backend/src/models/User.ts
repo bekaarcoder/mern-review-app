@@ -1,7 +1,15 @@
 import bcrypt from 'bcrypt';
-import { InferSchemaType, Schema, model } from 'mongoose';
+import { Document, Schema, model } from 'mongoose';
 
-const userSchema = new Schema({
+interface User extends Document {
+    username: string;
+    email: string;
+    password: string;
+    isVerified: boolean;
+    comparePassword(newPassword: string): Promise<boolean>;
+}
+
+const userSchema = new Schema<User>({
     username: {
         type: String,
         trim: true,
@@ -16,7 +24,6 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-        select: false,
     },
     isVerified: {
         type: Boolean,
@@ -32,6 +39,11 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-type User = InferSchemaType<typeof userSchema>;
+userSchema.methods.comparePassword = async function (newPassword: string) {
+    const result = await bcrypt.compare(newPassword, this.password);
+    return result;
+};
+
+// type User = InferSchemaType<typeof userSchema>;
 
 export default model<User>('User', userSchema);

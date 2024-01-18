@@ -1,9 +1,12 @@
 import { RequestHandler } from 'express';
+import crypto from 'crypto';
 import User from '../models/User';
 import createHttpError from 'http-errors';
 import EmailVerificationToken from '../models/EmailVerificationToken';
 import sendMail from '../util/mailer';
 import { isValidObjectId } from 'mongoose';
+import { generateVerificationCode } from '../util/helper';
+import PasswordResetToken from '../models/PasswordResetToken';
 
 interface SignUpBody {
     username?: string;
@@ -40,7 +43,7 @@ export const signUp: RequestHandler<
         await newUser.save();
 
         // Generate OTP
-        const OTP = Math.floor(Math.random() * 900000 + 100000);
+        const OTP = generateVerificationCode();
 
         const newEmailVerificationToken = new EmailVerificationToken({
             owner: newUser._id,
@@ -177,7 +180,7 @@ export const resendVerficationCode: RequestHandler<
         }
 
         // Generate OTP
-        const OTP = Math.floor(Math.random() * 900000 + 100000);
+        const OTP = generateVerificationCode();
 
         const newEmailVerificationToken = new EmailVerificationToken({
             owner: user._id,
@@ -205,10 +208,140 @@ export const resendVerficationCode: RequestHandler<
             `,
         });
 
-        res.status(201).json({
+        res.status(200).json({
             message:
                 'Please verify your email. Verification code has been sent to your email address.',
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+interface PasswordResetRequestBody {
+    emailOrUsername: string;
+}
+
+export const requestPasswordReset: RequestHandler<
+    unknown,
+    unknown,
+    PasswordResetRequestBody,
+    unknown
+> = async (req, res, next) => {
+    const { emailOrUsername } = req.body;
+
+    try {
+        const user = await User.findOne({
+            $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
+        }).exec();
+
+        if (!user) {
+            throw createHttpError(404, 'Invalid user');
+        }
+
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const newPasswordResetToken = new PasswordResetToken({
+            owner: user._id,
+            token: resetToken,
+        });
+        await newPasswordResetToken.save();
+
+        const resetPasswordUrl = `http://localhost:5173/reset-password?token=${resetToken}&id=${user._id}`;
+
+        await sendMail({
+            from: 'verification@storysync.com',
+            to: user.email,
+            subject: 'Password Reset Request for Your StorySync Account',
+            html: `
+            <p>
+            Dear ${user.username},
+            <p>
+            <p>
+            We received a request to reset the password for your StorySync account associated with this email address. If you initiated this request, please follow the instructions below to reset your password.
+            </p>
+            <h4>Reset Your Password: ${resetPasswordUrl}</h4>
+            <p>
+            Best regards,
+            <br />
+            StorySync Team
+            </p>
+            `,
+        });
+
+        res.status(200).json({ message: 'Email sent for password reset' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+interface PasswordResetBody {
+    token: string;
+    userId: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+export const resetPassword: RequestHandler<
+    unknown,
+    unknown,
+    PasswordResetBody,
+    unknown
+> = async (req, res, next) => {
+    const { token, userId, newPassword } = req.body;
+
+    try {
+        if (!token.trim() || !isValidObjectId(userId)) {
+            throw createHttpError(400, 'Invalid request');
+        }
+
+        const resetToken = await PasswordResetToken.findOne({ owner: userId });
+        if (!resetToken) {
+            throw createHttpError(401, 'Invalid request');
+        }
+
+        const isMatched = await resetToken.compareToken(token);
+        if (!isMatched) {
+            throw createHttpError(401, 'Invalid request');
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            throw createHttpError(404, 'Invalid user');
+        }
+
+        console.log('New Password: ', newPassword);
+        const isPasswordMatched = await user.comparePassword(newPassword);
+        if (isPasswordMatched) {
+            throw createHttpError(
+                400,
+                'New password must be different from the previous one'
+            );
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        await PasswordResetToken.findByIdAndDelete(resetToken._id);
+
+        await sendMail({
+            from: 'verification@storysync.com',
+            to: user.email,
+            subject: 'Password Reset Confirmation for Your StorySync Account',
+            html: `
+            <p>
+            Dear ${user.username},
+            <p>
+            <p>
+            We hope this message finds you well. We wanted to inform you that your password for StorySync has been successfully reset.
+            </p>
+            <p>
+            Best regards,
+            <br />
+            StorySync Team
+            </p>
+            `,
+        });
+
+        res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {
         next(error);
     }
