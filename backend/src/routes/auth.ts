@@ -1,6 +1,7 @@
 import express from 'express';
 import * as AuthController from '../controllers/auth';
 import {
+    loginBodyValidator,
     passwordResetBodyValidator,
     passwordResetRequestBodyValidator,
     signUpBodyValidator,
@@ -10,6 +11,8 @@ import {
 const router = express.Router();
 
 router.post('/signup', signUpBodyValidator, validate, AuthController.signUp);
+
+router.post('/signin', loginBodyValidator, validate, AuthController.login);
 
 router.post('/verify-email', AuthController.verifyEmail);
 

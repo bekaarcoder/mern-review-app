@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import createHttpError from 'http-errors';
 import EmailVerificationToken from '../models/EmailVerificationToken';
@@ -7,6 +8,7 @@ import sendMail from '../util/mailer';
 import { isValidObjectId } from 'mongoose';
 import { generateVerificationCode } from '../util/helper';
 import PasswordResetToken from '../models/PasswordResetToken';
+import env from '../util/validateEnv';
 
 interface SignUpBody {
     username?: string;
@@ -342,6 +344,46 @@ export const resetPassword: RequestHandler<
         });
 
         res.status(200).json({ message: 'Password reset successful' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+interface LoginBody {
+    email: string;
+    password: string;
+}
+
+export const login: RequestHandler<
+    unknown,
+    unknown,
+    LoginBody,
+    unknown
+> = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw createHttpError(400, 'Invalid credentials');
+        }
+
+        const isPasswordMatched = await user.comparePassword(password);
+        if (!isPasswordMatched) {
+            throw createHttpError(400, 'Invalid credentials');
+        }
+
+        const token = jwt.sign({ userId: user._id }, env.JWT_SECRET_KEY, {
+            expiresIn: '30d',
+        });
+
+        res.cookie('auth_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(200).json({ userId: user._id });
     } catch (error) {
         next(error);
     }

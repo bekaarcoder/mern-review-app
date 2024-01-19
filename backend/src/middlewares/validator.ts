@@ -18,6 +18,15 @@ export const signUpBodyValidator = [
         .withMessage('Password must be at least 8 characters'),
 ];
 
+export const loginBodyValidator = [
+    check('email').normalizeEmail().isEmail().withMessage('Email is invalid'),
+    check('password')
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage('Password is required'),
+];
+
 export const passwordResetRequestBodyValidator = [
     check('emailOrUsername')
         .trim()
