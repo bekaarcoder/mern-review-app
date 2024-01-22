@@ -7,3 +7,10 @@
 .vh-90 {
   height: 90vh !important;
 }
+
+/* Remove the default increment/decrement arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

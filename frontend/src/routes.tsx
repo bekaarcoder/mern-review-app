@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import Login from './page/Login';
 import Register from './page/Register';
+import ForgetPassword from './page/ForgetPassword';
+import EmailVerification from './page/EmailVerification';
 
 const router = createBrowserRouter([
     {
@@ -12,6 +14,14 @@ const router = createBrowserRouter([
             {
                 path: 'sign-up',
                 element: <Register />,
+            },
+            {
+                path: 'forget-password',
+                element: <ForgetPassword />,
+            },
+            {
+                path: 'email-verification',
+                element: <EmailVerification />,
             },
         ],
     },
