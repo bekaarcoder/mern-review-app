@@ -74,6 +74,7 @@ export const signUp: RequestHandler<
         });
 
         res.status(201).json({
+            user: newUser._id,
             message:
                 'Please verify your email. Verification code has been sent to your email address.',
         });

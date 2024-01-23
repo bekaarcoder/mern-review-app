@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
-import TextInputField from '../components/form/TextInputField';
 import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { signUp } from '../api/auth';
+import TextInputField from '../components/form/TextInputField';
+import { useAppContext } from '../hooks/useAppContext';
 
 interface RegisterFormData {
     email: string;
@@ -9,6 +11,10 @@ interface RegisterFormData {
 }
 
 const Register = () => {
+    const { showToast } = useAppContext();
+
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -17,6 +23,20 @@ const Register = () => {
 
     const onSubmit = async (data: RegisterFormData) => {
         console.log(data);
+        const response = await signUp(data);
+        if ('error' in response) {
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            console.log('Response:', response.data);
+            showToast({
+                message: 'Account creation successful',
+                type: 'SUCCESS',
+            });
+            navigate('/email-verification', {
+                state: { user: response.data.user },
+                replace: true,
+            });
+        }
     };
 
     return (

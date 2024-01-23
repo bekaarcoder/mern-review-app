@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const Navbar = () => {
     return (
         <nav
@@ -5,9 +7,9 @@ const Navbar = () => {
             data-bs-theme="dark"
         >
             <div className="container">
-                <a className="navbar-brand" href="#">
+                <Link className="navbar-brand" to="/">
                     StorySync
-                </a>
+                </Link>
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -44,9 +46,9 @@ const Navbar = () => {
                     </form>
                     <ul className="navbar-nav mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <a href="#" className="nav-link">
+                            <Link to="/sign-in" className="nav-link">
                                 Log in
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>

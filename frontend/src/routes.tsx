@@ -4,6 +4,8 @@ import Login from './page/Login';
 import Register from './page/Register';
 import ForgetPassword from './page/ForgetPassword';
 import EmailVerification from './page/EmailVerification';
+import ConfirmPassword from './page/ConfirmPassword';
+import NotFound from './page/NotFound';
 
 const router = createBrowserRouter([
     {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
             {
                 path: 'email-verification',
                 element: <EmailVerification />,
+            },
+            {
+                path: 'confirm-password',
+                element: <ConfirmPassword />,
+            },
+            {
+                path: '*',
+                element: <NotFound />,
             },
         ],
     },
