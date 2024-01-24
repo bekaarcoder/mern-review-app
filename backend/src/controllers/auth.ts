@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
@@ -388,4 +388,8 @@ export const login: RequestHandler<
     } catch (error) {
         next(error);
     }
+};
+
+export const validateUserToken = (req: Request, res: Response) => {
+    res.status(200).send({ userId: req.userId });
 };

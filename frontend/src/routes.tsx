@@ -6,16 +6,29 @@ import ForgetPassword from './page/ForgetPassword';
 import EmailVerification from './page/EmailVerification';
 import ConfirmPassword from './page/ConfirmPassword';
 import NotFound from './page/NotFound';
+import Home from './page/Home';
+import PublicRoute from './routes/PublicRoute';
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <App />,
         children: [
-            { path: 'sign-in', element: <Login /> },
+            { index: true, element: <Home /> },
+            {
+                path: 'sign-in',
+                element: <PublicRoute />,
+                children: [{ index: true, element: <Login /> }],
+            },
             {
                 path: 'sign-up',
-                element: <Register />,
+                element: <PublicRoute />,
+                children: [
+                    {
+                        index: true,
+                        element: <Register />,
+                    },
+                ],
             },
             {
                 path: 'forget-password',

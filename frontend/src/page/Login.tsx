@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import TextInputField from '../components/form/TextInputField';
+import { useAppContext } from '../hooks/useAppContext';
+import { signIn } from '../api/auth';
 
 interface LoginFormData {
     email: string;
@@ -8,6 +10,7 @@ interface LoginFormData {
 }
 
 const Login = () => {
+    const { showToast } = useAppContext();
     const {
         register,
         handleSubmit,
@@ -16,6 +19,14 @@ const Login = () => {
 
     const onSubmit = async (data: LoginFormData) => {
         console.log(data);
+        const response = await signIn(data);
+        if ('error' in response) {
+            console.log('Error: ', response);
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            console.log('Success: ', response.data);
+            showToast({ message: 'Logged in successfully', type: 'SUCCESS' });
+        }
     };
 
     return (

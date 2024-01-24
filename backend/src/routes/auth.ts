@@ -7,6 +7,7 @@ import {
     signUpBodyValidator,
     validate,
 } from '../middlewares/validator';
+import { verifyToken } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -31,5 +32,7 @@ router.post(
     validate,
     AuthController.resetPassword
 );
+
+router.get('/validate-token', verifyToken, AuthController.validateUserToken);
 
 export default router;

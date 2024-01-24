@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAppContext } from '../hooks/useAppContext';
 
 const Navbar = () => {
+    const { loggedInUser } = useAppContext();
+
     return (
         <nav
             className="navbar bg-dark navbar-expand-lg bg-body-tertiary"
@@ -46,9 +49,15 @@ const Navbar = () => {
                     </form>
                     <ul className="navbar-nav mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link to="/sign-in" className="nav-link">
-                                Log in
-                            </Link>
+                            {loggedInUser ? (
+                                <Link to="/sign-in" className="nav-link">
+                                    Logout
+                                </Link>
+                            ) : (
+                                <Link to="/sign-in" className="nav-link">
+                                    Log in
+                                </Link>
+                            )}
                         </li>
                     </ul>
                 </div>
