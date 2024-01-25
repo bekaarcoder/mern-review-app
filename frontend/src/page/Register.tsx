@@ -22,12 +22,10 @@ const Register = () => {
     } = useForm<RegisterFormData>();
 
     const onSubmit = async (data: RegisterFormData) => {
-        console.log(data);
         const response = await signUp(data);
         if ('error' in response) {
             showToast({ message: response.error, type: 'ERROR' });
         } else {
-            console.log('Response:', response.data);
             showToast({
                 message: 'Account creation successful',
                 type: 'SUCCESS',

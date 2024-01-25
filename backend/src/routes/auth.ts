@@ -35,4 +35,6 @@ router.post(
 
 router.get('/validate-token', verifyToken, AuthController.validateUserToken);
 
+router.post('/logout', AuthController.logout);
+
 export default router;

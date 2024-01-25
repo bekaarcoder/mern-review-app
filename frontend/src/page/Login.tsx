@@ -10,7 +10,7 @@ interface LoginFormData {
 }
 
 const Login = () => {
-    const { showToast } = useAppContext();
+    const { showToast, validateUser } = useAppContext();
     const {
         register,
         handleSubmit,
@@ -18,13 +18,11 @@ const Login = () => {
     } = useForm<LoginFormData>();
 
     const onSubmit = async (data: LoginFormData) => {
-        console.log(data);
         const response = await signIn(data);
         if ('error' in response) {
-            console.log('Error: ', response);
             showToast({ message: response.error, type: 'ERROR' });
         } else {
-            console.log('Success: ', response.data);
+            validateUser();
             showToast({ message: 'Logged in successfully', type: 'SUCCESS' });
         }
     };

@@ -14,6 +14,8 @@ type ToastMessage = {
 type AppContextType = {
     showToast: (toastMessage: ToastMessage) => void;
     loggedInUser: User | null;
+    onLogout: () => void;
+    validateUser: () => void;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,23 +35,33 @@ export const AppContextProvider = ({ children }: AppContextProviderType) => {
         }
     };
 
+    const onLogout = () => {
+        setLoggedInUser(null);
+    };
+
+    const validateUser = async () => {
+        const response = await validateToken();
+        if ('error' in response) {
+            console.log(response.error);
+            setLoggedInUser(null);
+        } else {
+            console.log(response.data);
+            setLoggedInUser(response.data);
+        }
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
-            const response = await validateToken();
-            if ('error' in response) {
-                console.log(response.error);
-                setLoggedInUser(null);
-            } else {
-                console.log(response.data);
-                setLoggedInUser(response.data);
-            }
+            await validateUser();
         };
 
         fetchUser();
     }, []);
 
     return (
-        <AppContext.Provider value={{ showToast, loggedInUser }}>
+        <AppContext.Provider
+            value={{ showToast, loggedInUser, onLogout, validateUser }}
+        >
             {children}
         </AppContext.Provider>
     );

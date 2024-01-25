@@ -393,3 +393,10 @@ export const login: RequestHandler<
 export const validateUserToken = (req: Request, res: Response) => {
     res.status(200).send({ userId: req.userId });
 };
+
+export const logout = (req: Request, res: Response) => {
+    res.cookie('auth_token', '', {
+        expires: new Date(0),
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
+};

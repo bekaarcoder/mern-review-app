@@ -1,14 +1,8 @@
-import { isAxiosError } from 'axios';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosError, isAxiosError } from 'axios';
 import client from './client';
 
-interface SignUpCredentials {
-    email: string;
-    username: string;
-    password: string;
-}
-
 interface SuccessResponse {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
 }
 
@@ -18,6 +12,25 @@ interface ErrorResponse {
 
 type Response = SuccessResponse | ErrorResponse;
 
+const handleError = (error: AxiosError | any): ErrorResponse => {
+    if (isAxiosError(error)) {
+        console.log(error.message);
+        console.log(error.response?.data);
+        return error.response
+            ? (error.response.data as ErrorResponse)
+            : ({ error: error.message } as ErrorResponse);
+    } else {
+        console.log(error);
+        return { error: error } as ErrorResponse;
+    }
+};
+
+interface SignUpCredentials {
+    email: string;
+    username: string;
+    password: string;
+}
+
 export const signUp = async (
     credentials: SignUpCredentials
 ): Promise<Response> => {
@@ -25,16 +38,7 @@ export const signUp = async (
         const response = await client.post('/auth/signup', credentials);
         return { data: response.data } as SuccessResponse;
     } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error.message);
-            console.log(error.response?.data);
-            return error.response
-                ? (error.response.data as ErrorResponse)
-                : ({ error: error.message } as ErrorResponse);
-        } else {
-            console.log(error);
-            return { error: error } as ErrorResponse;
-        }
+        return handleError(error);
     }
 };
 
@@ -53,16 +57,7 @@ export const verifyEmail = async (
         );
         return { data: response.data } as SuccessResponse;
     } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error.message);
-            console.log(error.response?.data);
-            return error.response
-                ? (error.response.data as ErrorResponse)
-                : ({ error: error.message } as ErrorResponse);
-        } else {
-            console.log(error);
-            return { error: error } as ErrorResponse;
-        }
+        return handleError(error);
     }
 };
 
@@ -80,16 +75,7 @@ export const signIn = async (
         });
         return { data: response.data } as SuccessResponse;
     } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error.message);
-            console.log(error.response?.data);
-            return error.response
-                ? (error.response.data as ErrorResponse)
-                : ({ error: error.message } as ErrorResponse);
-        } else {
-            console.log(error);
-            return { error: error } as ErrorResponse;
-        }
+        return handleError(error);
     }
 };
 
@@ -100,15 +86,21 @@ export const validateToken = async (): Promise<Response> => {
         });
         return { data: response.data } as SuccessResponse;
     } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error.message);
-            console.log(error.response?.data);
-            return error.response
-                ? (error.response.data as ErrorResponse)
-                : ({ error: error.message } as ErrorResponse);
-        } else {
-            console.log(error);
-            return { error: error } as ErrorResponse;
-        }
+        return handleError(error);
+    }
+};
+
+export const signOut = async (): Promise<Response> => {
+    try {
+        const response = await client.post(
+            '/auth/logout',
+            {},
+            {
+                withCredentials: true,
+            }
+        );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
     }
 };

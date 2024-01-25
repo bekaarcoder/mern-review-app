@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
+import LogoutButton from './LogoutButton';
 
 const Navbar = () => {
     const { loggedInUser } = useAppContext();
@@ -50,9 +51,7 @@ const Navbar = () => {
                     <ul className="navbar-nav mb-2 mb-lg-0">
                         <li className="nav-item">
                             {loggedInUser ? (
-                                <Link to="/sign-in" className="nav-link">
-                                    Logout
-                                </Link>
+                                <LogoutButton />
                             ) : (
                                 <Link to="/sign-in" className="nav-link">
                                     Log in
