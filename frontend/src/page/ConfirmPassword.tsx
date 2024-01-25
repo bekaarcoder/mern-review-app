@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form';
 import TextInputField from '../components/form/TextInputField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { resetPassword } from '../api/auth';
+import { useAppContext } from '../hooks/useAppContext';
+import { useEffect } from 'react';
 
 interface ConfirmPasswordFormData {
     newPassword: string;
@@ -8,6 +11,14 @@ interface ConfirmPasswordFormData {
 }
 
 const ConfirmPassword = () => {
+    const { showToast } = useAppContext();
+
+    const navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
+    const userId = searchParams.get('id');
+
     const {
         register,
         handleSubmit,
@@ -15,8 +26,23 @@ const ConfirmPassword = () => {
     } = useForm<ConfirmPasswordFormData>();
 
     const onSubmit = async (data: ConfirmPasswordFormData) => {
-        console.log(data);
+        const response = await resetPassword({ token, userId, ...data });
+        if ('error' in response) {
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            showToast({
+                message: 'You have successfully changed your password',
+                type: 'SUCCESS',
+            });
+            navigate('/sign-in');
+        }
     };
+
+    useEffect(() => {
+        if (!token || !userId) {
+            navigate('/');
+        }
+    }, [token, userId, navigate]);
 
     return (
         <div className="row justify-content-center vh-90 align-items-center">

@@ -39,7 +39,7 @@ const router = createBrowserRouter([
                 element: <EmailVerification />,
             },
             {
-                path: 'confirm-password',
+                path: 'reset-password',
                 element: <ConfirmPassword />,
             },
             {

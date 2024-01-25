@@ -104,3 +104,39 @@ export const signOut = async (): Promise<Response> => {
         return handleError(error);
     }
 };
+
+interface ResetPasswordRequestData {
+    emailOrUsername: string;
+}
+
+export const requestPasswordReset = async (
+    data: ResetPasswordRequestData
+): Promise<Response> => {
+    try {
+        const response = await client.post(
+            '/auth/reset-password-request',
+            data
+        );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
+interface ResetPasswordData {
+    token: string | null;
+    userId: string | null;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+export const resetPassword = async (
+    data: ResetPasswordData
+): Promise<Response> => {
+    try {
+        const response = await client.post('/auth/reset-password', data);
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};

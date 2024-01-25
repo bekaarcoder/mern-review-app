@@ -1,12 +1,16 @@
 import { useForm } from 'react-hook-form';
 import TextInputField from '../components/form/TextInputField';
 import { Link } from 'react-router-dom';
+import { requestPasswordReset } from '../api/auth';
+import { useAppContext } from '../hooks/useAppContext';
 
 interface ForgetPassowrdFormData {
-    email: string;
+    emailOrUsername: string;
 }
 
 const ForgetPassword = () => {
+    const { showToast } = useAppContext();
+
     const {
         register,
         handleSubmit,
@@ -14,7 +18,15 @@ const ForgetPassword = () => {
     } = useForm<ForgetPassowrdFormData>();
 
     const onSubmit = async (data: ForgetPassowrdFormData) => {
-        console.log(data);
+        const response = await requestPasswordReset(data);
+        if ('error' in response) {
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            showToast({
+                message: 'Please check you email to reset your password',
+                type: 'SUCCESS',
+            });
+        }
     };
 
     return (
@@ -27,13 +39,13 @@ const ForgetPassword = () => {
                         </h2>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <TextInputField
-                                name="email"
-                                label="Email Address"
+                                name="emailOrUsername"
+                                label="Email Address / Username"
                                 register={register}
                                 registerOptions={{
-                                    required: 'Email is required',
+                                    required: 'Email or username is required',
                                 }}
-                                error={errors.email}
+                                error={errors.emailOrUsername}
                             />
                             <div className="d-grid">
                                 <button
