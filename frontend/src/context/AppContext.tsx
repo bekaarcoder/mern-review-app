@@ -4,6 +4,8 @@ import { validateToken } from '../api/auth';
 
 interface User {
     userId: string;
+    username: string;
+    isVerified: boolean;
 }
 
 type ToastMessage = {

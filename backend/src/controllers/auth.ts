@@ -1,4 +1,4 @@
-import { Request, RequestHandler, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
@@ -390,8 +390,24 @@ export const login: RequestHandler<
     }
 };
 
-export const validateUserToken = (req: Request, res: Response) => {
-    res.status(200).send({ userId: req.userId });
+export const validateUserToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            throw createHttpError('Invalid User');
+        }
+        res.status(200).json({
+            userId: req.userId,
+            username: user.username,
+            isVerified: user.isVerified,
+        });
+    } catch (error) {
+        next(error);
+    }
 };
 
 export const logout = (req: Request, res: Response) => {

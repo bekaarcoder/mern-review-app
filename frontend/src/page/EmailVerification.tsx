@@ -2,17 +2,18 @@ import {
     ChangeEvent,
     FormEvent,
     KeyboardEvent,
+    MouseEvent,
     useCallback,
     useEffect,
     useRef,
     useState,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { verifyEmail } from '../api/auth';
+import { resendVerificationCode, verifyEmail } from '../api/auth';
 import { useAppContext } from '../hooks/useAppContext';
 
 const EmailVerification = () => {
-    const { showToast } = useAppContext();
+    const { showToast, validateUser } = useAppContext();
 
     const [verificationCode, setVerificationCode] = useState<string[]>(
         new Array(6).fill('')
@@ -89,7 +90,22 @@ const EmailVerification = () => {
                 message: 'Email verification successful',
                 type: 'SUCCESS',
             });
+            validateUser();
             navigate('/sign-in');
+        }
+    };
+
+    const handleResend = async (e: MouseEvent) => {
+        e.preventDefault();
+        const response = await resendVerificationCode({ userId: user });
+        if ('error' in response) {
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            showToast({
+                message:
+                    'Verification code has been sent to your email address',
+                type: 'SUCCESS',
+            });
         }
     };
 
@@ -99,7 +115,7 @@ const EmailVerification = () => {
 
     useEffect(() => {
         if (!user) {
-            // navigate('/not-found');
+            navigate('/not-found');
         }
     }, [user, navigate]);
 
@@ -159,6 +175,15 @@ const EmailVerification = () => {
                                 </button>
                             </div>
                         </form>
+                        <div className="d-flex justify-content-center mt-4">
+                            <a
+                                href="#"
+                                onClick={handleResend}
+                                className="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                            >
+                                Resend verification code
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

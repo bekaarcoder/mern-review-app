@@ -140,3 +140,21 @@ export const resetPassword = async (
         return handleError(error);
     }
 };
+
+interface ResendVerificationCodeData {
+    userId: string;
+}
+
+export const resendVerificationCode = async (
+    data: ResendVerificationCodeData
+): Promise<Response> => {
+    try {
+        const response = await client.post(
+            '/auth/resend-verification-code',
+            data
+        );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
