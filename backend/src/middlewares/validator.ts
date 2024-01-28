@@ -55,6 +55,11 @@ export const passwordResetBodyValidator = [
     }),
 ];
 
+export const authorBodyValidator = [
+    check('name').trim().notEmpty().withMessage('Name is required'),
+    check('about').trim().notEmpty().withMessage('About is required'),
+];
+
 export const validate = (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req).array();
     if (error.length) {
