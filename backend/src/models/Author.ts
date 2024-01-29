@@ -21,6 +21,8 @@ const authorSchema = new Schema(
     { timestamps: true }
 );
 
+authorSchema.index({ name: 'text' });
+
 type Author = InferSchemaType<typeof authorSchema>;
 
 export default model<Author>('Author', authorSchema);
