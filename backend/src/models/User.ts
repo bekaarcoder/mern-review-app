@@ -6,6 +6,7 @@ interface User extends Document {
     email: string;
     password: string;
     isVerified: boolean;
+    role: string;
     comparePassword(newPassword: string): Promise<boolean>;
 }
 
@@ -29,6 +30,12 @@ const userSchema = new Schema<User>({
         type: Boolean,
         require: true,
         default: false,
+    },
+    role: {
+        type: String,
+        required: true,
+        default: 'user',
+        enum: ['admin', 'user'],
     },
 });
 

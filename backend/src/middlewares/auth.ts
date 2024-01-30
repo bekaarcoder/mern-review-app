@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import env from '../util/validateEnv';
+import User from '../models/User';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -28,6 +29,27 @@ export const verifyToken = (
         req.userId = (decode as JwtPayload).userId;
         next();
     } catch (error) {
-        throw createHttpError(401, 'Unauthorized');
+        next(error);
+    }
+};
+
+export const isAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            throw createHttpError(403, 'Not Allowed');
+        }
+
+        if (user.role !== 'admin') {
+            throw createHttpError(403, 'Forbidden Request');
+        }
+
+        next();
+    } catch (error) {
+        next(error);
     }
 };

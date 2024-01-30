@@ -9,6 +9,7 @@ import {
 } from '../controllers/author';
 import { uploadImage } from '../middlewares/fileUpload';
 import { authorBodyValidator, validate } from '../middlewares/validator';
+import { isAdmin, verifyToken } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ router.get('/:authorId', getAuthor);
 
 router.post(
     '/create',
+    verifyToken,
+    isAdmin,
     uploadImage.single('avatar'),
     authorBodyValidator,
     validate,
@@ -26,13 +29,15 @@ router.post(
 
 router.put(
     '/update/:authorId',
+    verifyToken,
+    isAdmin,
     uploadImage.single('avatar'),
     authorBodyValidator,
     validate,
     updateAuthor
 );
 
-router.delete('/delete/:authorId', deleteAuthor);
+router.delete('/delete/:authorId', verifyToken, isAdmin, deleteAuthor);
 
 router.get('/search', searchAuthor);
 
