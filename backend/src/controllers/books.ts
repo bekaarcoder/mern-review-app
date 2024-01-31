@@ -132,6 +132,38 @@ export const updateBookCover = async (
     }
 };
 
+export const deleteBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookId } = req.params;
+
+        if (!isValidObjectId(bookId))
+            throw createHttpError(400, 'Invalid book id');
+
+        const book = await Book.findById(bookId);
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        //remove cover image
+        const public_id = book.cover?.public_id;
+        if (public_id) {
+            const { result } = await cloudinary.uploader.destroy(public_id);
+            if (result !== 'ok')
+                throw createHttpError(
+                    500,
+                    'Something went wrong while deleting cover image'
+                );
+        }
+
+        await book.deleteOne();
+        res.status(200).json({ message: 'Book deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default async function uploadCoverImage(imageFile: Express.Multer.File) {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
         imageFile.path

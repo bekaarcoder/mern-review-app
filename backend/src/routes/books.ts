@@ -3,6 +3,7 @@ import { isAdmin, verifyToken } from '../middlewares/auth';
 import { uploadImage } from '../middlewares/fileUpload';
 import {
     createBook,
+    deleteBook,
     updateBookCover,
     updateBookDetails,
 } from '../controllers/books';
@@ -42,5 +43,7 @@ router.patch(
     uploadImage.single('cover'),
     updateBookCover
 );
+
+router.delete('/delete/:bookId', verifyToken, isAdmin, deleteBook);
 
 export default router;
