@@ -6,6 +6,7 @@ interface User {
     userId: string;
     username: string;
     isVerified: boolean;
+    role: string;
 }
 
 type ToastMessage = {
@@ -18,6 +19,7 @@ type AppContextType = {
     loggedInUser: User | null;
     onLogout: () => void;
     validateUser: () => void;
+    loading: boolean;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -28,6 +30,7 @@ type AppContextProviderType = {
 
 export const AppContextProvider = ({ children }: AppContextProviderType) => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const showToast = (toastMessage: ToastMessage) => {
         if (toastMessage.type === 'SUCCESS') {
@@ -46,9 +49,11 @@ export const AppContextProvider = ({ children }: AppContextProviderType) => {
         if ('error' in response) {
             console.log(response.error);
             setLoggedInUser(null);
+            setLoading(false);
         } else {
             console.log(response.data);
             setLoggedInUser(response.data);
+            setLoading(false);
         }
     };
 
@@ -62,7 +67,7 @@ export const AppContextProvider = ({ children }: AppContextProviderType) => {
 
     return (
         <AppContext.Provider
-            value={{ showToast, loggedInUser, onLogout, validateUser }}
+            value={{ showToast, loggedInUser, onLogout, validateUser, loading }}
         >
             {children}
         </AppContext.Provider>

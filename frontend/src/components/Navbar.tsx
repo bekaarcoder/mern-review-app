@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
 import LogoutButton from './LogoutButton';
 
 const Navbar = () => {
-    const { loggedInUser } = useAppContext();
+    const { loggedInUser, loading } = useAppContext();
+
+    if (loading) return <></>;
 
     return (
         <nav
@@ -30,15 +32,49 @@ const Navbar = () => {
                     id="navbarSupportedContent"
                 >
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
-                            <a
-                                className="nav-link active"
-                                aria-current="page"
-                                href="#"
-                            >
-                                Home
-                            </a>
-                        </li>
+                        {loggedInUser && loggedInUser.role === 'admin' ? (
+                            <>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className={({ isActive }) =>
+                                            isActive
+                                                ? 'active nav-link'
+                                                : 'nav-link'
+                                        }
+                                        to="/admin"
+                                        end
+                                    >
+                                        Dashboard
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className="nav-link"
+                                        to="/admin/books"
+                                    >
+                                        Books
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className="nav-link"
+                                        to="/admin/authors"
+                                    >
+                                        Authors
+                                    </NavLink>
+                                </li>
+                            </>
+                        ) : (
+                            <li className="nav-item">
+                                <a
+                                    className="nav-link active"
+                                    aria-current="page"
+                                    href="#"
+                                >
+                                    Home
+                                </a>
+                            </li>
+                        )}
                     </ul>
                     <form className="d-flex" role="search">
                         <input

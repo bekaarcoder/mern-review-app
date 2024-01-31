@@ -16,7 +16,7 @@ const LogoutButton = () => {
 
     return (
         <button onClick={handleLogout} className="btn btn-outline-light">
-            Logout
+            <i className="bi bi-box-arrow-left"></i> Logout
         </button>
     );
 };

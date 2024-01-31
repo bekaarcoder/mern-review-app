@@ -404,6 +404,7 @@ export const validateUserToken = async (
             userId: req.userId,
             username: user.username,
             isVerified: user.isVerified,
+            role: user.role,
         });
     } catch (error) {
         next(error);

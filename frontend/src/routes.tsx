@@ -8,6 +8,10 @@ import ConfirmPassword from './page/ConfirmPassword';
 import NotFound from './page/NotFound';
 import Home from './page/Home';
 import PublicRoute from './routes/PublicRoute';
+import AdminRoute from './routes/AdminRoute';
+import AdminDashboard from './page/admin/AdminDashboard';
+import Books from './page/admin/Books';
+import Authors from './page/admin/Authors';
 
 const router = createBrowserRouter([
     {
@@ -41,6 +45,15 @@ const router = createBrowserRouter([
             {
                 path: 'reset-password',
                 element: <ConfirmPassword />,
+            },
+            {
+                path: 'admin',
+                element: <AdminRoute />,
+                children: [
+                    { index: true, element: <AdminDashboard /> },
+                    { path: 'books', element: <Books /> },
+                    { path: 'authors', element: <Authors /> },
+                ],
             },
             {
                 path: '*',
