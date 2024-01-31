@@ -101,6 +101,42 @@ export const bookBodyValidator = [
     }),
 ];
 
+export const bookUpdateBodyValidator = [
+    check('title').trim().notEmpty().withMessage('Book title is required'),
+    check('description')
+        .trim()
+        .notEmpty()
+        .withMessage('Book description is required'),
+    check('author').trim().notEmpty().withMessage('Book author is required'),
+    check('publishedDate').isDate().withMessage('Published date is required'),
+    check('language').trim().notEmpty().withMessage('Language is required'),
+    check('type').trim().notEmpty().withMessage('Book type is required'),
+    check('status')
+        .isIn(['private', 'public'])
+        .withMessage('Status must be public or private'),
+    check('genres')
+        .isArray()
+        .withMessage('Genres must be an array of genre')
+        .custom((value) => {
+            for (const genre of value) {
+                if (!genres.includes(genre))
+                    throw new Error(`Invalid genre: ${genre}`);
+            }
+            return true;
+        }),
+    check('tags')
+        .isArray({ min: 1 })
+        .withMessage('Tags must be an array of string')
+        .custom((value) => {
+            for (const tag of value) {
+                console.log('Tag: ', tag);
+                if (typeof tag !== 'string' || tag === '')
+                    throw new Error(`Invalid tag: ${tag}`);
+            }
+            return true;
+        }),
+];
+
 export const validate = (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req).array();
     if (error.length) {
