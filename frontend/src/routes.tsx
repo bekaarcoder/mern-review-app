@@ -12,6 +12,8 @@ import AdminRoute from './routes/AdminRoute';
 import AdminDashboard from './page/admin/AdminDashboard';
 import Books from './page/admin/Books';
 import Authors from './page/admin/Authors';
+import AddBook from './page/admin/AddBook';
+import AddAuthor from './page/admin/AddAuthor';
 
 const router = createBrowserRouter([
     {
@@ -52,7 +54,9 @@ const router = createBrowserRouter([
                 children: [
                     { index: true, element: <AdminDashboard /> },
                     { path: 'books', element: <Books /> },
+                    { path: 'create-book', element: <AddBook /> },
                     { path: 'authors', element: <Authors /> },
+                    { path: 'create-author', element: <AddAuthor /> },
                 ],
             },
             {

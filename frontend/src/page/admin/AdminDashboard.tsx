@@ -19,7 +19,7 @@ const AdminDashboard = () => {
                             <li>
                                 <Link
                                     className="dropdown-item"
-                                    to="/admin/book/create"
+                                    to="/admin/create-book"
                                 >
                                     <i className="bi bi-journal-plus"></i> Add
                                     Book
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
                             <li>
                                 <Link
                                     className="dropdown-item"
-                                    to="/admin/author/create"
+                                    to="/admin/create-author"
                                 >
                                     <i className="bi bi-person-badge"></i> Add
                                     Author

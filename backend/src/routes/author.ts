@@ -15,8 +15,6 @@ const router = express.Router();
 
 router.get('/', getAuthors);
 
-router.get('/:authorId', getAuthor);
-
 router.post(
     '/create',
     verifyToken,
@@ -40,5 +38,7 @@ router.put(
 router.delete('/delete/:authorId', verifyToken, isAdmin, deleteAuthor);
 
 router.get('/search', searchAuthor);
+
+router.get('/:authorId', getAuthor);
 
 export default router;
