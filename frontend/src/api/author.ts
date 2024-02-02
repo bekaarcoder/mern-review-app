@@ -58,3 +58,16 @@ export const searchAuthor = async (
         return handleError(error);
     }
 };
+
+export const addAuthor = async (
+    authorFormData: FormData
+): Promise<Response> => {
+    try {
+        const response = await client.post('/authors/create', authorFormData, {
+            withCredentials: true,
+        });
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};

@@ -1,3 +1,5 @@
+import ManageAuthorForm from '../../components/ManageAuthorForm';
+
 const AddAuthor = () => {
     return (
         <div className="row justify-content-center">
@@ -5,6 +7,7 @@ const AddAuthor = () => {
                 <div className="card">
                     <div className="card-body">
                         <h3 className="card-title text-center">Add Author</h3>
+                        <ManageAuthorForm />
                     </div>
                 </div>
             </div>

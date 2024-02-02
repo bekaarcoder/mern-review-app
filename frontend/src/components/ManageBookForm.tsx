@@ -6,6 +6,8 @@ import { useAppContext } from '../hooks/useAppContext';
 import TextAreaField from './form/TextAreaField';
 import TextInputField from './form/TextInputField';
 import { addBook } from '../api/books';
+import AppButton from './AppButton';
+import SelectField from './form/SelectField';
 
 type BookFormData = {
     title: string;
@@ -42,7 +44,6 @@ const ManageBookForm = () => {
     } = useForm<BookFormData>();
 
     const onSubmit = async (data: BookFormData) => {
-        console.log(data);
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('description', data.description);
@@ -51,23 +52,12 @@ const ManageBookForm = () => {
         formData.append('type', data.type);
         formData.append('genres', JSON.stringify(data.genres));
 
-        // data.genres.forEach((genre, index) => {
-        //     formData.append(`genres[${index}]`, genre);
-        // });
-
         const allTags: string[] = data.tags.split(',');
-        // allTags.forEach((tag, index) => {
-        //     formData.append(`tags[${index}]`, tag);
-        // });
         formData.append('tags', JSON.stringify(allTags));
 
         formData.append('language', data.language);
         formData.append('status', data.status);
         formData.append('cover', data.cover[0]);
-
-        for (const [name, value] of formData) {
-            console.log(name, value);
-        }
 
         const response = await addBook(formData);
         if ('error' in response) {
@@ -178,32 +168,16 @@ const ManageBookForm = () => {
                         />
                     </div>
                     <div className="flex-grow-1">
-                        <div className="mb-3">
-                            <label className="form-label" htmlFor="type">
-                                Book Type
-                            </label>
-                            <select
-                                id="type"
-                                className={`form-select ${
-                                    errors.type ? 'is-invalid' : ''
-                                }`}
-                                {...register('type', {
-                                    required: 'Book Type is required',
-                                })}
-                            >
-                                <option value="">Select Book Type</option>
-                                {bookTypes.map((val) => (
-                                    <option value={val} key={val}>
-                                        {val}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.type && (
-                                <div className="invalid-feedback">
-                                    {errors.type.message}
-                                </div>
-                            )}
-                        </div>
+                        <SelectField
+                            name="type"
+                            label="Book Type"
+                            register={register}
+                            registerOptions={{
+                                required: 'Book Type is required',
+                            }}
+                            options={bookTypes}
+                            error={errors.type}
+                        />
                     </div>
                 </div>
                 <div className="row mb-3">
@@ -256,14 +230,14 @@ const ManageBookForm = () => {
                         />
                     </div>
                     <div className="flex-grow-1">
-                        <TextInputField
+                        <SelectField
                             name="status"
-                            type="text"
                             label="Status"
                             register={register}
                             registerOptions={{
                                 required: 'Book Status is required',
                             }}
+                            options={['private', 'public']}
                             error={errors.status}
                         />
                     </div>
@@ -283,13 +257,7 @@ const ManageBookForm = () => {
                     error={errors.cover}
                 />
                 <div className="d-grid">
-                    <button
-                        type="submit"
-                        className="btn btn-dark"
-                        disabled={isSubmitting}
-                    >
-                        Create Book
-                    </button>
+                    <AppButton label="Create Book" disabled={isSubmitting} />
                 </div>
             </form>
         </div>
