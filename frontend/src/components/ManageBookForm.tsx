@@ -1,10 +1,11 @@
 import { MouseEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { searchAuthor } from '../api/author';
-import { bookGenres } from '../config/book-option-config';
+import { bookGenres, bookTypes } from '../config/book-option-config';
 import { useAppContext } from '../hooks/useAppContext';
 import TextAreaField from './form/TextAreaField';
 import TextInputField from './form/TextInputField';
+import { addBook } from '../api/books';
 
 type BookFormData = {
     title: string;
@@ -26,41 +27,63 @@ type AuthorType = {
 
 const ManageBookForm = () => {
     const { showToast } = useAppContext();
-    const [showResult, setShowResult] = useState(true);
+    const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedAuthorId, setSelectedAuthorId] = useState<string | null>();
-    const [searchResults, setSearchResults] = useState<AuthorType[]>([
-        { _id: '1', name: 'Dan Brown' },
-        { _id: '2', name: 'Leigh Bardugo' },
-    ]);
+    const [selectedAuthorId, setSelectedAuthorId] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<AuthorType[]>([]);
 
     const {
         register,
         handleSubmit,
         watch,
         setValue,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<BookFormData>();
 
-    const onSubmit = (data: BookFormData) => {
+    const onSubmit = async (data: BookFormData) => {
         console.log(data);
         const formData = new FormData();
         formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('author', selectedAuthorId);
+        formData.append('publishedDate', data.publishedDate.toString());
+        formData.append('type', data.type);
+        formData.append('genres', JSON.stringify(data.genres));
+
+        // data.genres.forEach((genre, index) => {
+        //     formData.append(`genres[${index}]`, genre);
+        // });
 
         const allTags: string[] = data.tags.split(',');
-        allTags.forEach((tag, index) => {
-            formData.append(`tags[${index}]`, tag);
-        });
+        // allTags.forEach((tag, index) => {
+        //     formData.append(`tags[${index}]`, tag);
+        // });
+        formData.append('tags', JSON.stringify(allTags));
+
+        formData.append('language', data.language);
+        formData.append('status', data.status);
+        formData.append('cover', data.cover[0]);
 
         for (const [name, value] of formData) {
             console.log(name, value);
+        }
+
+        const response = await addBook(formData);
+        if ('error' in response) {
+            console.log(response.error);
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            console.log(response.data);
+            reset();
+            showToast({ message: 'Book added successfully', type: 'SUCCESS' });
         }
     };
 
     const selectAuthor = (e: MouseEvent<HTMLButtonElement>) => {
         const target = e.target as HTMLButtonElement;
         setValue('author', target.value);
-        setSelectedAuthorId(target.getAttribute('data-id'));
+        setSelectedAuthorId(target.getAttribute('data-id')!);
         setShowResult(false);
     };
 
@@ -155,30 +178,38 @@ const ManageBookForm = () => {
                         />
                     </div>
                     <div className="flex-grow-1">
-                        <TextInputField
-                            name="type"
-                            type="text"
-                            label="Book Type"
-                            register={register}
-                            registerOptions={{
-                                required: 'Book type is required',
-                            }}
-                            error={errors.type}
-                        />
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor="type">
+                                Book Type
+                            </label>
+                            <select
+                                id="type"
+                                className={`form-select ${
+                                    errors.type ? 'is-invalid' : ''
+                                }`}
+                                {...register('type', {
+                                    required: 'Book Type is required',
+                                })}
+                            >
+                                <option value="">Select Book Type</option>
+                                {bookTypes.map((val) => (
+                                    <option value={val} key={val}>
+                                        {val}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.type && (
+                                <div className="invalid-feedback">
+                                    {errors.type.message}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-                {/* <TextInputField
-                    name="genres"
-                    type="text"
-                    label="Genres"
-                    register={register}
-                    registerOptions={{ required: 'Genre is required' }}
-                    error={errors.genres}
-                /> */}
                 <div className="row mb-3">
                     <label className="form-label">Select Genres</label>
                     {bookGenres.map((val) => (
-                        <div className="col-md-4" key={val}>
+                        <div className="col-sm-6 col-md-4" key={val}>
                             <div className="form-check">
                                 <input
                                     className="form-check-input"
@@ -252,7 +283,11 @@ const ManageBookForm = () => {
                     error={errors.cover}
                 />
                 <div className="d-grid">
-                    <button type="submit" className="btn btn-dark">
+                    <button
+                        type="submit"
+                        className="btn btn-dark"
+                        disabled={isSubmitting}
+                    >
                         Create Book
                     </button>
                 </div>

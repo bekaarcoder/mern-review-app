@@ -25,7 +25,9 @@ const TextInputField = ({
 }: Props) => {
     return (
         <div className="mb-3">
-            <label htmlFor={name}>{label}</label>
+            <label htmlFor={name} className="form-label">
+                {label}
+            </label>
             <input
                 className={`form-control ${error && 'is-invalid'}`}
                 id={name}

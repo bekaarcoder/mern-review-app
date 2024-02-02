@@ -24,6 +24,7 @@ export const createBook = async (
 ) => {
     try {
         const newBook: BookType = req.body;
+        console.log(newBook);
         const imageFile = req.file as Express.Multer.File;
 
         if (!isValidObjectId(newBook.author)) {
