@@ -36,6 +36,17 @@ export const getAuthors = async (): Promise<Response> => {
     }
 };
 
+export const getAuthor = async (authorID: string): Promise<Response> => {
+    try {
+        const response = await client.get(`/authors/${authorID}`, {
+            withCredentials: true,
+        });
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
 type SearchParams = {
     name: string;
 };
@@ -66,6 +77,24 @@ export const addAuthor = async (
         const response = await client.post('/authors/create', authorFormData, {
             withCredentials: true,
         });
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
+export const updateAuthor = async (
+    authorFormData: FormData,
+    authorId: string
+) => {
+    try {
+        const response = await client.put(
+            `/authors/update/${authorId}`,
+            authorFormData,
+            {
+                withCredentials: true,
+            }
+        );
         return { data: response.data } as SuccessResponse;
     } catch (error) {
         return handleError(error);

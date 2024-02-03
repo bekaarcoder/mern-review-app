@@ -35,3 +35,14 @@ export const addBook = async (bookFormData: FormData): Promise<Response> => {
         return handleError(error);
     }
 };
+
+export const getBook = async (bookId: string): Promise<Response> => {
+    try {
+        const response = await client.get(`/books/${bookId}`, {
+            withCredentials: true,
+        });
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};

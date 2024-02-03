@@ -165,6 +165,27 @@ export const deleteBook = async (
     }
 };
 
+export const getBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const bookId = req.params.bookId;
+
+        if (!isValidObjectId(bookId)) {
+            throw createHttpError(400, 'Invalid book id');
+        }
+
+        const book = await Book.findById(bookId).populate('author');
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        res.status(200).json(book);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default async function uploadCoverImage(imageFile: Express.Multer.File) {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
         imageFile.path

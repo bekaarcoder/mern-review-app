@@ -1,24 +1,39 @@
 import { useForm } from 'react-hook-form';
-import TextInputField from './form/TextInputField';
-import TextAreaField from './form/TextAreaField';
-import { addAuthor } from '../api/author';
 import { useAppContext } from '../hooks/useAppContext';
+import { Author } from '../models/Author';
 import AppButton from './AppButton';
+import TextAreaField from './form/TextAreaField';
+import TextInputField from './form/TextInputField';
+import { Response } from '../api/client';
+import { useNavigate } from 'react-router-dom';
 
 type AuthorFormData = {
     name: string;
     about: string;
     avatar: FileList | null;
 };
-const ManageAuthorForm = () => {
+
+interface Props {
+    authorData?: Author;
+    onSave: (authorFormData: FormData) => Promise<Response>;
+}
+
+const ManageAuthorForm = ({ authorData, onSave }: Props) => {
     const { showToast } = useAppContext();
+
+    const navigate = useNavigate();
 
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<AuthorFormData>();
+    } = useForm<AuthorFormData>({
+        defaultValues: {
+            name: authorData?.name || '',
+            about: authorData?.about || '',
+        },
+    });
 
     const onSubmit = async (data: AuthorFormData) => {
         console.log(data);
@@ -34,17 +49,23 @@ const ManageAuthorForm = () => {
             console.log(name, value);
         }
 
-        const response = await addAuthor(formData);
+        const response = await onSave(formData);
         if ('error' in response) {
-            console.log(response.error);
             showToast({ message: response.error, type: 'ERROR' });
         } else {
-            console.log(response.data);
-            reset();
-            showToast({
-                message: 'Author added successfully',
-                type: 'SUCCESS',
-            });
+            if (!authorData) {
+                reset();
+                showToast({
+                    message: 'Author created successfully',
+                    type: 'SUCCESS',
+                });
+            } else {
+                navigate('/admin');
+                showToast({
+                    message: 'Author updated successfully',
+                    type: 'SUCCESS',
+                });
+            }
         }
     };
 
@@ -65,14 +86,25 @@ const ManageAuthorForm = () => {
                 registerOptions={{ required: 'About is required' }}
                 error={errors.about}
             />
-            <TextInputField
-                name="avatar"
-                label="Avatar"
-                type="file"
-                register={register}
-            />
-            <div className="d-grid">
-                <AppButton label="Create Author" disabled={isSubmitting} />
+            <div className="d-flex gap-3 align-items-center">
+                {authorData?.avatar && (
+                    <img
+                        src={authorData.avatar.url}
+                        alt={authorData.name}
+                        width={75}
+                    />
+                )}
+                <div className="flex-grow-1">
+                    <TextInputField
+                        name="avatar"
+                        label="Avatar"
+                        type="file"
+                        register={register}
+                    />
+                </div>
+            </div>
+            <div className="d-grid mt-4">
+                <AppButton label="Save Author" disabled={isSubmitting} />
             </div>
         </form>
     );

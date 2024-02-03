@@ -4,6 +4,7 @@ import { uploadImage } from '../middlewares/fileUpload';
 import {
     createBook,
     deleteBook,
+    getBook,
     updateBookCover,
     updateBookDetails,
 } from '../controllers/books';
@@ -45,5 +46,7 @@ router.patch(
 );
 
 router.delete('/delete/:bookId', verifyToken, isAdmin, deleteBook);
+
+router.get('/:bookId', getBook);
 
 export default router;

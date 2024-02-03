@@ -13,7 +13,7 @@ const AppButton = ({ label, disabled }: Props) => {
                         aria-hidden="true"
                     ></span>
                     <span role="status" className="ms-1">
-                        Creating...
+                        Saving...
                     </span>
                 </>
             ) : (

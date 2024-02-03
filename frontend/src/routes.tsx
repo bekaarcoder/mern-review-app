@@ -14,6 +14,8 @@ import Books from './page/admin/Books';
 import Authors from './page/admin/Authors';
 import AddBook from './page/admin/AddBook';
 import AddAuthor from './page/admin/AddAuthor';
+import EditAuthor from './page/admin/EditAuthor';
+import EditBookDetail from './page/admin/EditBookDetail';
 
 const router = createBrowserRouter([
     {
@@ -55,8 +57,10 @@ const router = createBrowserRouter([
                     { index: true, element: <AdminDashboard /> },
                     { path: 'books', element: <Books /> },
                     { path: 'create-book', element: <AddBook /> },
+                    { path: 'edit-book/:bookId', element: <EditBookDetail /> },
                     { path: 'authors', element: <Authors /> },
                     { path: 'create-author', element: <AddAuthor /> },
+                    { path: 'edit-author/:authorId', element: <EditAuthor /> },
                 ],
             },
             {

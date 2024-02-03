@@ -8,12 +8,13 @@ import TextInputField from './form/TextInputField';
 import { addBook } from '../api/books';
 import AppButton from './AppButton';
 import SelectField from './form/SelectField';
+import { Book } from '../models/Book';
 
 type BookFormData = {
     title: string;
     description: string;
     author: string;
-    publishedDate: Date;
+    publishedDate: string;
     status: string;
     type: string;
     genres: string[];
@@ -27,12 +28,20 @@ type AuthorType = {
     name: string;
 };
 
-const ManageBookForm = () => {
+interface Props {
+    bookData?: Book;
+}
+
+const ManageBookForm = ({ bookData }: Props) => {
     const { showToast } = useAppContext();
     const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedAuthorId, setSelectedAuthorId] = useState<string>('');
+    const [selectedAuthorId, setSelectedAuthorId] = useState<string>(
+        bookData?.author._id || ''
+    );
     const [searchResults, setSearchResults] = useState<AuthorType[]>([]);
+
+    console.log('Author', selectedAuthorId);
 
     const {
         register,
@@ -41,9 +50,24 @@ const ManageBookForm = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<BookFormData>();
+    } = useForm<BookFormData>({
+        defaultValues: {
+            title: bookData?.title || '',
+            description: bookData?.description || '',
+            publishedDate: bookData?.publishedDate
+                ? new Date(bookData.publishedDate).toISOString().split('T')[0]
+                : '',
+            type: bookData?.type || '',
+            genres: bookData?.genres || [],
+            tags: bookData?.tags.join(',') || '',
+            language: bookData?.language || '',
+            status: bookData?.status || '',
+            author: bookData?.author.name || '',
+        },
+    });
 
     const onSubmit = async (data: BookFormData) => {
+        console.log(data);
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('description', data.description);
@@ -57,17 +81,17 @@ const ManageBookForm = () => {
 
         formData.append('language', data.language);
         formData.append('status', data.status);
-        formData.append('cover', data.cover[0]);
+        if (!bookData) formData.append('cover', data.cover[0]);
 
-        const response = await addBook(formData);
-        if ('error' in response) {
-            console.log(response.error);
-            showToast({ message: response.error, type: 'ERROR' });
-        } else {
-            console.log(response.data);
-            reset();
-            showToast({ message: 'Book added successfully', type: 'SUCCESS' });
-        }
+        // const response = await addBook(formData);
+        // if ('error' in response) {
+        //     console.log(response.error);
+        //     showToast({ message: response.error, type: 'ERROR' });
+        // } else {
+        //     console.log(response.data);
+        //     reset();
+        //     showToast({ message: 'Book added successfully', type: 'SUCCESS' });
+        // }
     };
 
     const selectAuthor = (e: MouseEvent<HTMLButtonElement>) => {
@@ -242,22 +266,24 @@ const ManageBookForm = () => {
                         />
                     </div>
                 </div>
-                <TextInputField
-                    name="cover"
-                    type="file"
-                    label="Cover Image"
-                    register={register}
-                    registerOptions={{
-                        validate: (image) => {
-                            if (image.length === 0)
-                                return 'Cover Image is required';
-                            return true;
-                        },
-                    }}
-                    error={errors.cover}
-                />
+                {!bookData && (
+                    <TextInputField
+                        name="cover"
+                        type="file"
+                        label="Cover Image"
+                        register={register}
+                        registerOptions={{
+                            validate: (image) => {
+                                if (image.length === 0)
+                                    return 'Cover Image is required';
+                                return true;
+                            },
+                        }}
+                        error={errors.cover}
+                    />
+                )}
                 <div className="d-grid">
-                    <AppButton label="Create Book" disabled={isSubmitting} />
+                    <AppButton label="Save Book" disabled={isSubmitting} />
                 </div>
             </form>
         </div>
