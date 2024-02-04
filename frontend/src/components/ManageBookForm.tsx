@@ -1,14 +1,14 @@
 import { MouseEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { searchAuthor } from '../api/author';
+import { Response } from '../api/client';
 import { bookGenres, bookTypes } from '../config/book-option-config';
 import { useAppContext } from '../hooks/useAppContext';
-import TextAreaField from './form/TextAreaField';
-import TextInputField from './form/TextInputField';
-import { addBook } from '../api/books';
+import { Book } from '../models/Book';
 import AppButton from './AppButton';
 import SelectField from './form/SelectField';
-import { Book } from '../models/Book';
+import TextAreaField from './form/TextAreaField';
+import TextInputField from './form/TextInputField';
 
 type BookFormData = {
     title: string;
@@ -30,9 +30,10 @@ type AuthorType = {
 
 interface Props {
     bookData?: Book;
+    onSave: (data: FormData) => Promise<Response>;
 }
 
-const ManageBookForm = ({ bookData }: Props) => {
+const ManageBookForm = ({ bookData, onSave }: Props) => {
     const { showToast } = useAppContext();
     const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -40,8 +41,6 @@ const ManageBookForm = ({ bookData }: Props) => {
         bookData?.author._id || ''
     );
     const [searchResults, setSearchResults] = useState<AuthorType[]>([]);
-
-    console.log('Author', selectedAuthorId);
 
     const {
         register,
@@ -67,7 +66,6 @@ const ManageBookForm = ({ bookData }: Props) => {
     });
 
     const onSubmit = async (data: BookFormData) => {
-        console.log(data);
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('description', data.description);
@@ -83,15 +81,25 @@ const ManageBookForm = ({ bookData }: Props) => {
         formData.append('status', data.status);
         if (!bookData) formData.append('cover', data.cover[0]);
 
-        // const response = await addBook(formData);
-        // if ('error' in response) {
-        //     console.log(response.error);
-        //     showToast({ message: response.error, type: 'ERROR' });
-        // } else {
-        //     console.log(response.data);
-        //     reset();
-        //     showToast({ message: 'Book added successfully', type: 'SUCCESS' });
-        // }
+        const response = await onSave(formData);
+        if ('error' in response) {
+            console.log(response.error);
+            showToast({ message: response.error, type: 'ERROR' });
+        } else {
+            console.log(response.data);
+            if (!bookData) {
+                reset();
+                showToast({
+                    message: 'Book added successfully',
+                    type: 'SUCCESS',
+                });
+            } else {
+                showToast({
+                    message: 'Book updated successfully',
+                    type: 'SUCCESS',
+                });
+            }
+        }
     };
 
     const selectAuthor = (e: MouseEvent<HTMLButtonElement>) => {

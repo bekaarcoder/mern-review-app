@@ -102,7 +102,7 @@ export const bookBodyValidator = [
 ];
 
 export const bookUpdateBodyValidator = [
-    check('title').trim().notEmpty().withMessage('Book title is required'),
+    check('title').trim().notEmpty().withMessage('Title is required'),
     check('description')
         .trim()
         .notEmpty()

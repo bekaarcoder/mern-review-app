@@ -46,3 +46,33 @@ export const getBook = async (bookId: string): Promise<Response> => {
         return handleError(error);
     }
 };
+
+export interface BookData {
+    title: string;
+    description: string;
+    author: string;
+    publishedDate: string;
+    status: string;
+    type: string;
+    genres: string[];
+    tags: string[];
+    language: string;
+}
+
+export const updateBook = async (
+    bookFormData: BookData,
+    bookId: string
+): Promise<Response> => {
+    try {
+        const response = await client.patch(
+            `books/update-book-details/${bookId}`,
+            bookFormData,
+            {
+                withCredentials: true,
+            }
+        );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
