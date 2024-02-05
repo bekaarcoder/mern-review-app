@@ -5,6 +5,7 @@ import {
     createBook,
     deleteBook,
     getBook,
+    getBooks,
     updateBookCover,
     updateBookDetails,
 } from '../controllers/books';
@@ -16,6 +17,8 @@ import {
 import { parseData } from '../middlewares/helper';
 
 const router = express.Router();
+
+router.get('/', getBooks);
 
 router.post(
     '/create',

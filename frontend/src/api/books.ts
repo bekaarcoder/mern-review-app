@@ -47,6 +47,17 @@ export const getBook = async (bookId: string): Promise<Response> => {
     }
 };
 
+export const getBooks = async (): Promise<Response> => {
+    try {
+        const response = await client.get('/books', {
+            withCredentials: true,
+        });
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
 export interface BookData {
     title: string;
     description: string;

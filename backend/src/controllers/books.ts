@@ -186,6 +186,19 @@ export const getBook = async (
     }
 };
 
+export const getBooks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const books = await Book.find().sort({ createdAt: 'desc' });
+        res.status(200).json(books);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default async function uploadCoverImage(imageFile: Express.Multer.File) {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
         imageFile.path
