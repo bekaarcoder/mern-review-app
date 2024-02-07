@@ -25,11 +25,16 @@ const handleError = (error: AxiosError | any): ErrorResponse => {
     }
 };
 
-export const getAuthors = async (): Promise<Response> => {
+export const getAuthors = async (pageNumber?: number): Promise<Response> => {
     try {
-        const response = await client.get('/authors', {
-            withCredentials: true,
-        });
+        const queryParams = new URLSearchParams();
+        queryParams.append('pageNo', pageNumber?.toString() || '');
+        const response = await client.get(
+            `/authors?${queryParams.toString()}`,
+            {
+                withCredentials: true,
+            }
+        );
         return { data: response.data } as SuccessResponse;
     } catch (error) {
         return handleError(error);

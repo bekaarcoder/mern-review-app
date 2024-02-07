@@ -143,11 +143,29 @@ export const getAuthors = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { pageNo, limit } = req.query;
+
+    const responseLimit = parseInt(limit ? limit.toString() : '2');
+    const pageNumber = parseInt(pageNo ? pageNo.toString() : '0');
+
     try {
+        const totalDocuments = await Author.countDocuments({});
+        const totalPage = Math.ceil(totalDocuments / responseLimit);
+        const hasPrevious = pageNumber + 1 > 1;
+        const hasNext = pageNumber + 1 < totalPage;
+
         const authors = await Author.find()
             .sort({ createdAt: 'desc' })
-            .limit(12);
-        res.status(200).json(authors);
+            .skip(pageNumber * responseLimit)
+            .limit(responseLimit);
+        res.status(200).json({
+            authors,
+            total: totalDocuments,
+            pages: totalPage,
+            page: pageNumber,
+            hasNext,
+            hasPrevious,
+        });
     } catch (error) {
         next(error);
     }
