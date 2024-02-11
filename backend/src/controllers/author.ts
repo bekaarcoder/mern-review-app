@@ -111,7 +111,7 @@ export const deleteAuthor: RequestHandler = async (req, res, next) => {
 
         await author.deleteOne();
 
-        res.sendStatus(204);
+        res.status(200).json({ message: 'Author deleted successfully' });
     } catch (error) {
         next(error);
     }
@@ -145,7 +145,7 @@ export const getAuthors = async (
 ) => {
     const { pageNo, limit } = req.query;
 
-    const responseLimit = parseInt(limit ? limit.toString() : '2');
+    const responseLimit = parseInt(limit ? limit.toString() : '3');
     const pageNumber = parseInt(pageNo ? pageNo.toString() : '0');
 
     try {

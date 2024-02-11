@@ -91,7 +91,7 @@ export const addAuthor = async (
 export const updateAuthor = async (
     authorFormData: FormData,
     authorId: string
-) => {
+): Promise<Response> => {
     try {
         const response = await client.put(
             `/authors/update/${authorId}`,
@@ -100,6 +100,17 @@ export const updateAuthor = async (
                 withCredentials: true,
             }
         );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
+export const deleteAuthor = async (id: string): Promise<Response> => {
+    try {
+        const response = await client.delete(`/authors/delete/${id}`, {
+            withCredentials: true,
+        });
         return { data: response.data } as SuccessResponse;
     } catch (error) {
         return handleError(error);
