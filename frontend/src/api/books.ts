@@ -47,9 +47,15 @@ export const getBook = async (bookId: string): Promise<Response> => {
     }
 };
 
-export const getBooks = async (): Promise<Response> => {
+export const getBooks = async (
+    pageNumber?: number,
+    limit?: number
+): Promise<Response> => {
     try {
-        const response = await client.get('/books', {
+        const queryParams = new URLSearchParams();
+        queryParams.append('pageNo', pageNumber?.toString() || '');
+        queryParams.append('limit', limit?.toString() || '');
+        const response = await client.get(`/books?${queryParams.toString()}`, {
             withCredentials: true,
         });
         return { data: response.data } as SuccessResponse;
@@ -82,6 +88,17 @@ export const updateBook = async (
                 withCredentials: true,
             }
         );
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
+export const deleteBook = async (id: string): Promise<Response> => {
+    try {
+        const response = await client.delete(`/books/delete/${id}`, {
+            withCredentials: true,
+        });
         return { data: response.data } as SuccessResponse;
     } catch (error) {
         return handleError(error);

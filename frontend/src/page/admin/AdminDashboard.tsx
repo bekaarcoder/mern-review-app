@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import BookList from '../../components/BookList';
 import StatsCard from '../../components/StatsCard';
+import { useBookContext } from '../../hooks/useBookContext';
+import { useCallback, useEffect } from 'react';
 
 const AdminDashboard = () => {
+    const { books, fetchBooks } = useBookContext();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const memoizedFetchBooks = useCallback(fetchBooks, []);
+
+    useEffect(() => {
+        memoizedFetchBooks(0, 3);
+    }, [memoizedFetchBooks]);
+
     return (
         <div className="row">
             <div className="col-md-12">
@@ -49,7 +60,7 @@ const AdminDashboard = () => {
             </div>
             <div className="col-md-12">
                 <h4>Recent Uploads</h4>
-                <BookList />
+                {books && <BookList books={books} />}
             </div>
         </div>
     );

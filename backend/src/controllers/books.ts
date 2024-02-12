@@ -191,9 +191,28 @@ export const getBooks = async (
     res: Response,
     next: NextFunction
 ) => {
+    const { pageNo, limit } = req.query;
+
+    const responseLimit = parseInt(limit ? limit.toString() : '5');
+    const pageNumber = parseInt(pageNo ? pageNo.toString() : '0');
+
     try {
-        const books = await Book.find().sort({ createdAt: 'desc' });
-        res.status(200).json(books);
+        const totalDocuments = await Book.countDocuments();
+        const totalPage = Math.ceil(totalDocuments / responseLimit);
+        const hasPrevious = pageNumber + 1 > 1;
+        const hasNext = pageNumber + 1 < totalPage;
+
+        const books = await Book.find()
+            .sort({ createdAt: 'desc' })
+            .skip(pageNumber * responseLimit)
+            .limit(responseLimit);
+        res.status(200).json({
+            books,
+            total: totalDocuments,
+            pages: pageNumber,
+            hasNext,
+            hasPrevious,
+        });
     } catch (error) {
         next(error);
     }

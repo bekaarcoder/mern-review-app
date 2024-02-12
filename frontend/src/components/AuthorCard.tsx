@@ -16,6 +16,7 @@ const AuthorCard = ({ author }: Props) => {
     const { currentPage, fetchAuthors } = useAuthorContext();
 
     const [show, setShow] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleClose = () => {
         setShow(false);
@@ -27,7 +28,7 @@ const AuthorCard = ({ author }: Props) => {
 
     const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        console.log(author._id);
+        setLoading(true);
         const response = await deleteAuthor(author._id);
         if ('error' in response) {
             console.log(response.error);
@@ -40,6 +41,7 @@ const AuthorCard = ({ author }: Props) => {
             });
         }
         setShow(false);
+        setLoading(false);
         fetchAuthors(currentPage);
     };
 
@@ -102,6 +104,8 @@ const AuthorCard = ({ author }: Props) => {
                 show={show}
                 handleClose={handleClose}
                 handleDelete={handleDelete}
+                loading={loading}
+                objectType="Author"
             />
         </>
     );
