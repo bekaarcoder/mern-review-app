@@ -11,7 +11,7 @@ const BookList = ({ books }: Props) => {
             <table className="table table-responsive align-middle table-hover">
                 <tbody>
                     {books?.map((book) => (
-                        <BookRow book={book} />
+                        <BookRow book={book} key={book._id} />
                     ))}
                 </tbody>
             </table>

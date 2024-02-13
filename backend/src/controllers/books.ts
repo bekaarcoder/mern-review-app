@@ -193,7 +193,7 @@ export const getBooks = async (
 ) => {
     const { pageNo, limit } = req.query;
 
-    const responseLimit = parseInt(limit ? limit.toString() : '5');
+    const responseLimit = parseInt(limit ? limit.toString() : '2');
     const pageNumber = parseInt(pageNo ? pageNo.toString() : '0');
 
     try {
@@ -206,10 +206,16 @@ export const getBooks = async (
             .sort({ createdAt: 'desc' })
             .skip(pageNumber * responseLimit)
             .limit(responseLimit);
+
+        // Count books for the current page
+        const booksCount = books.length;
+
         res.status(200).json({
             books,
             total: totalDocuments,
-            pages: pageNumber,
+            pages: totalPage,
+            page: pageNumber,
+            count: booksCount,
             hasNext,
             hasPrevious,
         });

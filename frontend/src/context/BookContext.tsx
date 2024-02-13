@@ -13,6 +13,7 @@ type Pagination = {
     page: number;
     pages: number;
     total: number;
+    count: number;
 };
 
 export type Book = {
@@ -52,8 +53,9 @@ export const BookContextProvider = ({ children }: BookContextProviderType) => {
             console.log(response.error);
         } else {
             setBooks(response.data.books);
-            const { hasNext, hasPrevious, page, pages, total } = response.data;
-            setPagination({ hasNext, hasPrevious, page, pages, total });
+            const { hasNext, hasPrevious, page, pages, count, total } =
+                response.data;
+            setPagination({ hasNext, hasPrevious, page, pages, total, count });
         }
     };
 

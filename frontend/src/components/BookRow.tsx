@@ -4,7 +4,7 @@ import DeleteModal from './DeleteModal';
 import { deleteBook } from '../api/books';
 import { useAppContext } from '../hooks/useAppContext';
 import { useBookContext } from '../hooks/useBookContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface Props {
     book: Book;
@@ -12,7 +12,9 @@ interface Props {
 
 const BookRow = ({ book }: Props) => {
     const { showToast } = useAppContext();
-    const { currentPage, fetchBooks } = useBookContext();
+    const { currentPage, fetchBooks, pagination } = useBookContext();
+
+    const location = useLocation();
 
     const [show, setShow] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +42,17 @@ const BookRow = ({ book }: Props) => {
         }
         setShow(false);
         setLoading(false);
-        fetchBooks(currentPage);
+        if (location.pathname.includes('books')) {
+            if (pagination) {
+                if (pagination?.count === 1 && currentPage !== 0) {
+                    fetchBooks(currentPage - 1);
+                }
+            } else {
+                fetchBooks(currentPage);
+            }
+        } else {
+            fetchBooks(0, 3);
+        }
     };
 
     return (
