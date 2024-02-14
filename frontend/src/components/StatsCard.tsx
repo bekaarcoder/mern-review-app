@@ -5,7 +5,7 @@ interface Props {
 
 const StatsCard = ({ title, subTitle }: Props) => {
     return (
-        <div className="col-md-4 col-xl-3">
+        <div className="col-3 col-sm-3 col-md-3 col-xl-3">
             <div className="card text-bg-secondary">
                 <div className="card-body">
                     <h4 className="card-title">{title}</h4>

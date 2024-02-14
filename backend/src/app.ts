@@ -8,6 +8,7 @@ import userRoutes from './routes/users';
 import authRoutes from './routes/auth';
 import authorRoutes from './routes/author';
 import bookRoutes from './routes/books';
+import reviewRoutes from './routes/review';
 import createHttpError, { isHttpError } from 'http-errors';
 import env from './util/validateEnv';
 
@@ -34,6 +35,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/authors', authorRoutes);
 app.use('/api/books', bookRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

@@ -128,8 +128,11 @@ export const searchAuthor = async (
 ) => {
     const query = req.query as SearchQuery;
     try {
+        // const result = await Author.find({
+        //     $text: { $search: `"${query.name}"` },
+        // });
         const result = await Author.find({
-            $text: { $search: `"${query.name}"` },
+            name: { $regex: query.name, $options: 'i' },
         });
 
         res.status(200).json(result);
@@ -145,7 +148,7 @@ export const getAuthors = async (
 ) => {
     const { pageNo, limit } = req.query;
 
-    const responseLimit = parseInt(limit ? limit.toString() : '3');
+    const responseLimit = parseInt(limit ? limit.toString() : '12');
     const pageNumber = parseInt(pageNo ? pageNo.toString() : '0');
 
     try {

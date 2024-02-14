@@ -25,14 +25,16 @@ const Books = () => {
     }, [memoizedFetchBooks, currentPage]);
 
     return (
-        <div className="row">
+        <div className="row my-4">
             <div className="col-md-12">
-                <h3>Books</h3>
+                <h3 className="my-3 display-5">Books</h3>
                 {books && <BookList books={books} />}
                 {pagination && (
                     <Pagination
                         hasNext={pagination.hasNext}
                         hasPrevious={pagination.hasPrevious}
+                        currentPage={pagination.page}
+                        totalPage={pagination.pages}
                         handleNext={handleNext}
                         handlePrevious={handlePrevious}
                     />

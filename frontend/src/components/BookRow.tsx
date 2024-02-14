@@ -99,7 +99,7 @@ const BookRow = ({ book }: Props) => {
                         <i className="bi bi-eye-slash-fill fs-5"></i>
                     )}
                 </td>
-                <td>
+                <td width={100}>
                     <button
                         type="button"
                         className="btn btn-sm btn-danger"

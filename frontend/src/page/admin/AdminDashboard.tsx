@@ -18,7 +18,7 @@ const AdminDashboard = () => {
         <div className="row">
             <div className="col-md-12">
                 <div className="d-flex justify-content-between align-items-center">
-                    <h2>Admin Dashboard</h2>
+                    <h2 className="display-5">Dashboard</h2>
                     <div className="btn-group">
                         <button
                             type="button"
@@ -53,9 +53,10 @@ const AdminDashboard = () => {
             </div>
             <div className="col-md-12 my-4">
                 <div className="row justify-content-center">
-                    <StatsCard title="Total Uploads" subTitle="100" />
-                    <StatsCard title="Total Reviews" subTitle="100" />
-                    <StatsCard title="Total Users" subTitle="100" />
+                    <StatsCard title="Books" subTitle="100" />
+                    <StatsCard title="Authors" subTitle="100" />
+                    <StatsCard title="Reviews" subTitle="100" />
+                    <StatsCard title="Users" subTitle="100" />
                 </div>
             </div>
             <div className="col-md-12">
