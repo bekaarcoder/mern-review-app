@@ -1,0 +1,16 @@
+Dump
+
+No Auth:
+docker exec <mongo_container> sh -c 'mongodump --archive' > db.dump
+
+Authenticated
+docker exec <mongo_container> sh -c 'mongodump --authenticationDatabase admin -u <user> -p <password> --db <database> --archive' > db.dump
+
+
+Restore
+
+No Auth:
+docker exec -i <mongo_container> sh -c 'mongorestore --archive' < db.dump
+
+Authenticated:
+docker exec <mongo_container> sh -c 'mongorestore --authenticationDatabase admin -u <user> -p <password> --db <database> --archive' < db.dump

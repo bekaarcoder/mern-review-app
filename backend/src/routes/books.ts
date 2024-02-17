@@ -7,6 +7,7 @@ import {
     getBook,
     getBooks,
     getLatestBooks,
+    getRelatedBooks,
     updateBookCover,
     updateBookDetails,
 } from '../controllers/books';
@@ -54,5 +55,7 @@ router.patch(
 router.delete('/delete/:bookId', verifyToken, isAdmin, deleteBook);
 
 router.get('/:bookId', getBook);
+
+router.get('/related/:bookId', getRelatedBooks);
 
 export default router;

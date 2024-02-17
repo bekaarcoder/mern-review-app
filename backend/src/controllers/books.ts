@@ -4,6 +4,8 @@ import createHttpError from 'http-errors';
 import { isValidObjectId } from 'mongoose';
 import Author from '../models/Author';
 import Book from '../models/Book';
+import Review from '../models/Review';
+import { averageRatingPipeline } from '../util/helper';
 
 type BookType = {
     title: string;
@@ -180,7 +182,21 @@ export const getBook = async (
         const book = await Book.findById(bookId).populate('author');
         if (!book) throw createHttpError(404, 'Book not found');
 
-        res.status(200).json(book);
+        const bookDetails = book.toObject({ getters: false, virtuals: false });
+        const bookReviews: { averageRating?: string; reviewCount?: number } =
+            {};
+
+        const [aggregatedReview] = await Review.aggregate(
+            averageRatingPipeline(book._id)
+        );
+
+        if (aggregatedReview) {
+            const { ratingAverage, reviewCount } = aggregatedReview;
+            bookReviews.averageRating = parseFloat(ratingAverage).toFixed(1);
+            bookReviews.reviewCount = reviewCount;
+        }
+
+        res.status(200).json({ ...bookDetails, ...bookReviews });
     } catch (error) {
         next(error);
     }
@@ -224,13 +240,6 @@ export const getBooks = async (
     }
 };
 
-export default async function uploadCoverImage(imageFile: Express.Multer.File) {
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-        imageFile.path
-    );
-    return { secure_url, public_id };
-}
-
 export const getLatestBooks = async (
     req: Request,
     res: Response,
@@ -253,3 +262,56 @@ export const getLatestBooks = async (
         next(error);
     }
 };
+
+export const getRelatedBooks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookId } = req.params;
+
+        if (!isValidObjectId(bookId))
+            throw createHttpError(400, 'Invalid Book id');
+
+        const book = await Book.findById(bookId);
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        const books = await Book.aggregate([
+            {
+                $lookup: {
+                    from: 'Book',
+                    localField: 'tags',
+                    foreignField: '_id',
+                    as: 'relatedBooks',
+                },
+            },
+            {
+                $match: {
+                    tags: { $in: [...book.tags] },
+                    _id: { $ne: book._id },
+                },
+            },
+            {
+                $project: {
+                    title: 1,
+                    cover: '$cover.url',
+                },
+            },
+            {
+                $limit: 5,
+            },
+        ]);
+
+        res.status(200).json(books);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export default async function uploadCoverImage(imageFile: Express.Multer.File) {
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+        imageFile.path
+    );
+    return { secure_url, public_id };
+}
