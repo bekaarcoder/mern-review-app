@@ -230,3 +230,26 @@ export default async function uploadCoverImage(imageFile: Express.Multer.File) {
     );
     return { secure_url, public_id };
 }
+
+export const getLatestBooks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const results = await Book.find({ status: 'public' })
+            .populate('author')
+            .sort({ createdAt: 'desc' })
+            .limit(5);
+        const books = results.map((book) => ({
+            id: book._id,
+            title: book.title,
+            author: book.author,
+            cover: book.cover,
+        }));
+
+        res.status(200).json(books);
+    } catch (error) {
+        next(error);
+    }
+};

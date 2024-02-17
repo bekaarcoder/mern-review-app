@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { signOut } from '../api/auth';
 import { useAppContext } from '../hooks/useAppContext';
 
 const LogoutButton = () => {
     const { onLogout, showToast } = useAppContext();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         const response = await signOut();
@@ -11,6 +13,7 @@ const LogoutButton = () => {
         } else {
             onLogout();
             showToast({ message: 'You are logged out', type: 'SUCCESS' });
+            navigate('/');
         }
     };
 

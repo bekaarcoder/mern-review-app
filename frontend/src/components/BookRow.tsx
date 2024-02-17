@@ -46,9 +46,9 @@ const BookRow = ({ book }: Props) => {
             if (pagination) {
                 if (pagination?.count === 1 && currentPage !== 0) {
                     fetchBooks(currentPage - 1);
+                } else {
+                    fetchBooks(currentPage);
                 }
-            } else {
-                fetchBooks(currentPage);
             }
         } else {
             fetchBooks(0, 3);
