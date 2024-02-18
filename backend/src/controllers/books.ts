@@ -4,8 +4,7 @@ import createHttpError from 'http-errors';
 import { isValidObjectId } from 'mongoose';
 import Author from '../models/Author';
 import Book from '../models/Book';
-import Review from '../models/Review';
-import { averageRatingPipeline } from '../util/helper';
+import { getBookReview, relatedBooksPipeline } from '../util/helper';
 
 type BookType = {
     title: string;
@@ -183,20 +182,10 @@ export const getBook = async (
         if (!book) throw createHttpError(404, 'Book not found');
 
         const bookDetails = book.toObject({ getters: false, virtuals: false });
-        const bookReviews: { averageRating?: string; reviewCount?: number } =
-            {};
 
-        const [aggregatedReview] = await Review.aggregate(
-            averageRatingPipeline(book._id)
-        );
+        const bookReview = await getBookReview(book._id);
 
-        if (aggregatedReview) {
-            const { ratingAverage, reviewCount } = aggregatedReview;
-            bookReviews.averageRating = parseFloat(ratingAverage).toFixed(1);
-            bookReviews.reviewCount = reviewCount;
-        }
-
-        res.status(200).json({ ...bookDetails, ...bookReviews });
+        res.status(200).json({ ...bookDetails, ...bookReview });
     } catch (error) {
         next(error);
     }
@@ -277,25 +266,60 @@ export const getRelatedBooks = async (
         const book = await Book.findById(bookId);
         if (!book) throw createHttpError(404, 'Book not found');
 
+        const books = await Book.aggregate(
+            relatedBooksPipeline(book._id, book.tags)
+        );
+
+        const relatedBooks = await Promise.all(
+            books.map(async (b) => {
+                const bookReview = await getBookReview(b._id);
+
+                return {
+                    id: b._id,
+                    title: b.title,
+                    cover: b.cover,
+                    reviews: { ...bookReview },
+                };
+            })
+        );
+
+        res.status(200).json(relatedBooks);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getTopRatedBooks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
         const books = await Book.aggregate([
             {
                 $lookup: {
                     from: 'Book',
-                    localField: 'tags',
+                    localField: 'reviews',
                     foreignField: '_id',
-                    as: 'relatedBooks',
+                    as: 'topRated',
                 },
             },
             {
                 $match: {
-                    tags: { $in: [...book.tags] },
-                    _id: { $ne: book._id },
+                    reviews: { $exists: true },
+                    status: { $eq: 'public' },
                 },
             },
             {
                 $project: {
                     title: 1,
                     cover: '$cover.url',
+                    reviewCount: { $size: '$reviews' },
+                },
+            },
+            {
+                $sort: {
+                    reviewCount: -1,
                 },
             },
             {
@@ -303,7 +327,21 @@ export const getRelatedBooks = async (
             },
         ]);
 
-        res.status(200).json(books);
+        const topRatedBooks = await Promise.all(
+            books.map(async (b) => {
+                const bookReview = await getBookReview(b._id);
+
+                return {
+                    id: b._id,
+                    title: b.title,
+                    cover: b.cover,
+                    reviewCount: b.reviewCount,
+                    averageRating: bookReview.averageRating,
+                };
+            })
+        );
+
+        res.status(200).json(topRatedBooks);
     } catch (error) {
         next(error);
     }
