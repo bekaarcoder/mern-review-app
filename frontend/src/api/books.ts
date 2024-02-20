@@ -104,3 +104,21 @@ export const deleteBook = async (id: string): Promise<Response> => {
         return handleError(error);
     }
 };
+
+export const getTopReviewedBooks = async (): Promise<Response> => {
+    try {
+        const response = await client.get('/books/top-rated');
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};
+
+export const getLatestBooks = async (): Promise<Response> => {
+    try {
+        const response = await client.get('/books/latest');
+        return { data: response.data } as SuccessResponse;
+    } catch (error) {
+        return handleError(error);
+    }
+};

@@ -1,11 +1,14 @@
+import LatestBooks from '../components/LatestBooks';
 import NotVerified from '../components/NotVerified';
+import TopReviewedBooks from '../components/TopReviewedBooks';
 
 const Home = () => {
     return (
         <div className="row">
             <div className="col-md-12">
                 <NotVerified />
-                <h2 className="display-2">Review App</h2>
+                <LatestBooks />
+                <TopReviewedBooks />
             </div>
         </div>
     );
