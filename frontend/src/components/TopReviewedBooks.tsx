@@ -18,6 +18,7 @@ const TopReviewedBooks = () => {
             if ('error' in response) {
                 console.log(response.error);
             } else {
+                console.log(response.data);
                 setBooks(response.data);
             }
         };
@@ -29,7 +30,8 @@ const TopReviewedBooks = () => {
         <>
             <h3 className="my-4">Top Reviewed Books</h3>
             <div className="row">
-                {books.length && books.map((book) => <BookCard book={book} />)}
+                {books.length &&
+                    books.map((book) => <BookCard book={book} key={book.id} />)}
             </div>
         </>
     );

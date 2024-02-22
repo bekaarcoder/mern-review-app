@@ -33,7 +33,7 @@ const LatestBooks = () => {
                 <div className="col-md-12">
                     <Carousel indicators={false}>
                         {books.map((book) => (
-                            <Carousel.Item>
+                            <Carousel.Item key={book.id}>
                                 <div className="bg-light p-2 d-flex justify-content-center gap-5 align-items-center">
                                     <img
                                         src={book.cover.url}

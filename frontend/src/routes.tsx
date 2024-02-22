@@ -17,6 +17,7 @@ import AddAuthor from './page/admin/AddAuthor';
 import EditAuthor from './page/admin/EditAuthor';
 import EditBookDetail from './page/admin/EditBookDetail';
 import { BookContextProvider } from './context/BookContext';
+import { AuthorContextProvider } from './context/AuthorContext';
 
 const router = createBrowserRouter([
     {
@@ -73,7 +74,14 @@ const router = createBrowserRouter([
                     },
                     { path: 'create-book', element: <AddBook /> },
                     { path: 'edit-book/:bookId', element: <EditBookDetail /> },
-                    { path: 'authors', element: <Authors /> },
+                    {
+                        path: 'authors',
+                        element: (
+                            <AuthorContextProvider>
+                                <Authors />
+                            </AuthorContextProvider>
+                        ),
+                    },
                     { path: 'create-author', element: <AddAuthor /> },
                     { path: 'edit-author/:authorId', element: <EditAuthor /> },
                 ],
