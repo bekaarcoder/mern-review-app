@@ -42,7 +42,8 @@ const AuthorCard = ({ author }: Props) => {
         }
         setShow(false);
         setLoading(false);
-        fetchAuthors(currentPage);
+        const controller = new AbortController();
+        fetchAuthors(currentPage, controller);
     };
 
     return (

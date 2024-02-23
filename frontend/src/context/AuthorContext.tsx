@@ -3,6 +3,7 @@ import {
     ReactNode,
     SetStateAction,
     createContext,
+    useEffect,
     useState,
 } from 'react';
 import { getAuthors } from '../api/author';
@@ -20,7 +21,8 @@ type AuthorContextType = {
     authors: Author[] | null;
     currentPage: number;
     pagination: Pagination | null;
-    fetchAuthors: (page: number) => void;
+    fetchAuthors: (page: number, controller: AbortController) => void;
+    deleteBook: () => void;
     setCurrentPage: Dispatch<SetStateAction<number>>;
 };
 
@@ -39,16 +41,46 @@ export const AuthorContextProvider = ({
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
 
-    const fetchAuthors = async (page: number) => {
-        const response = await getAuthors(page);
+    const deleteBook = async () => {
+        const controller = new AbortController();
+        console.log('Deleting book');
+        await fetchAuthors(currentPage, controller);
+    };
+
+    const fetchAuthors = async (page: number, controller: AbortController) => {
+        const response = await getAuthors(controller, page);
         if ('error' in response) {
             console.log(response.error);
         } else {
+            console.log(response.data);
             setAuthors(response.data.authors);
             const { hasNext, hasPrevious, page, pages, total } = response.data;
             setPagination({ hasNext, hasPrevious, page, pages, total });
         }
     };
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        // const fetchAuthors = async (page: number) => {
+        //     const response = await getAuthors(controller, page);
+        //     if ('error' in response) {
+        //         console.log(response.error);
+        //     } else {
+        //         console.log(response.data);
+        //         setAuthors(response.data.authors);
+        //         const { hasNext, hasPrevious, page, pages, total } =
+        //             response.data;
+        //         setPagination({ hasNext, hasPrevious, page, pages, total });
+        //     }
+        // };
+
+        fetchAuthors(currentPage, controller);
+
+        return () => {
+            controller.abort();
+        };
+    }, [currentPage]);
 
     return (
         <AuthorContext.Provider
@@ -56,6 +88,7 @@ export const AuthorContextProvider = ({
                 authors,
                 currentPage,
                 fetchAuthors,
+                deleteBook,
                 pagination,
                 setCurrentPage,
             }}

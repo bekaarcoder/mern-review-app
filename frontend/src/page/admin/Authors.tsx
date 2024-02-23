@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect } from 'react';
+import { MouseEvent } from 'react';
 import AuthorList from '../../components/AuthorList';
 import Pagination from '../../components/Pagination';
 import { useAuthorContext } from '../../hooks/useAuthorContext';
@@ -12,11 +12,7 @@ type Pagination = {
 };
 
 const Authors = () => {
-    const { authors, pagination, currentPage, setCurrentPage, fetchAuthors } =
-        useAuthorContext();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const memoizedFetchAuthors = useCallback(fetchAuthors, []);
+    const { authors, pagination, setCurrentPage } = useAuthorContext();
 
     const handleNext = (e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -27,10 +23,6 @@ const Authors = () => {
         e.preventDefault();
         setCurrentPage((prev) => prev - 1);
     };
-
-    useEffect(() => {
-        memoizedFetchAuthors(currentPage);
-    }, [memoizedFetchAuthors, currentPage]);
 
     return (
         <div className="row my-4">

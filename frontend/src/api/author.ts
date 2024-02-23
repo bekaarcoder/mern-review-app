@@ -25,14 +25,19 @@ const handleError = (error: AxiosError | any): ErrorResponse => {
     }
 };
 
-export const getAuthors = async (pageNumber?: number): Promise<Response> => {
+export const getAuthors = async (
+    controller: AbortController,
+    pageNumber?: number
+): Promise<Response> => {
     try {
+        // const controller = new AbortController()
         const queryParams = new URLSearchParams();
         queryParams.append('pageNo', pageNumber?.toString() || '');
         const response = await client.get(
             `/authors?${queryParams.toString()}`,
             {
                 withCredentials: true,
+                signal: controller.signal,
             }
         );
         return { data: response.data } as SuccessResponse;
