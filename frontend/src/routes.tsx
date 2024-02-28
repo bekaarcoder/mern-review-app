@@ -18,6 +18,7 @@ import EditAuthor from './page/admin/EditAuthor';
 import EditBookDetail from './page/admin/EditBookDetail';
 import { BookContextProvider } from './context/BookContext';
 import { AuthorContextProvider } from './context/AuthorContext';
+import BookDetails from './page/BookDetails';
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
         element: <App />,
         children: [
             { index: true, element: <Home /> },
+            {
+                path: 'books/:bookId',
+                element: <BookDetails />,
+            },
             {
                 path: 'sign-in',
                 element: <PublicRoute />,
