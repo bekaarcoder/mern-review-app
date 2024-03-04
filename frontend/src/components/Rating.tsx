@@ -1,8 +1,9 @@
 interface Props {
     rating: number;
+    size?: number;
 }
 
-const Rating = ({ rating }: Props) => {
+const Rating = ({ rating, size = 3 }: Props) => {
     const totalRating = 5;
     const filledStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
@@ -25,7 +26,7 @@ const Rating = ({ rating }: Props) => {
     return (
         <>
             {starsArray.map((star, index) => (
-                <span key={index} className="me-1 fs-3">
+                <span key={index} className={`me-1 fs-${size}`}>
                     {star}
                 </span>
             ))}

@@ -44,7 +44,12 @@ export const addReview = async (
         book.reviews.push(newReview._id);
         await book.save();
 
-        res.status(201).json(newReview);
+        const review = await Review.findById(newReview._id).populate({
+            path: 'owner',
+            select: 'username',
+        });
+
+        res.status(201).json(review);
     } catch (error) {
         next(error);
     }
@@ -66,6 +71,9 @@ export const updateReview = async (
         const review = await Review.findOne({
             _id: reviewId,
             owner: req.userId,
+        }).populate({
+            path: 'owner',
+            select: 'username',
         });
         if (!review) {
             throw createHttpError(404, 'Review not found');
@@ -114,7 +122,7 @@ export const removeReview = async (
     }
 };
 
-export const getReviewsByMovie = async (
+export const getReviewsByBook = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -136,7 +144,7 @@ export const getReviewsByMovie = async (
             .select('reviews');
         if (!book) throw createHttpError(404, 'Book not found');
 
-        res.status(200).json(book);
+        res.status(200).json(book.reviews);
     } catch (error) {
         next(error);
     }

@@ -140,7 +140,7 @@ export const bookUpdateBodyValidator = [
 export const reviewBodyValidator = [
     check('rating')
         .isFloat({ min: 1, max: 5 })
-        .withMessage('Rating must be a number between 1 and 5'),
+        .withMessage('Please provide a rating between 1 and 5'),
 ];
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {

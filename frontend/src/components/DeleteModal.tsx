@@ -6,7 +6,7 @@ interface Props {
     handleClose: () => void;
     handleDelete: (e: MouseEvent<HTMLButtonElement>) => void;
     loading: boolean;
-    objectType: 'Author' | 'Book';
+    objectType: 'Author' | 'Book' | 'Review';
 }
 
 const DeleteModal = ({

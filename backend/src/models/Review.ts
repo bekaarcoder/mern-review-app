@@ -1,25 +1,30 @@
 import { InferSchemaType, Schema, model } from 'mongoose';
 
-const reviewSchema = new Schema({
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+const reviewSchema = new Schema(
+    {
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
+        parentBook: {
+            type: Schema.Types.ObjectId,
+            ref: 'Book',
+            required: true,
+        },
+        content: {
+            type: String,
+            trim: true,
+        },
+        rating: {
+            type: Number,
+            required: true,
+        },
     },
-    parentBook: {
-        type: Schema.Types.ObjectId,
-        ref: 'Book',
-        required: true,
-    },
-    content: {
-        type: String,
-        trim: true,
-    },
-    rating: {
-        type: Number,
-        required: true,
-    },
-});
+    {
+        timestamps: true,
+    }
+);
 
 type Review = InferSchemaType<typeof reviewSchema>;
 

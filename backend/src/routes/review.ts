@@ -3,7 +3,7 @@ import { verifyToken } from '../middlewares/auth';
 import { reviewBodyValidator, validate } from '../middlewares/validator';
 import {
     addReview,
-    getReviewsByMovie,
+    getReviewsByBook,
     removeReview,
     updateReview,
 } from '../controllers/review';
@@ -28,6 +28,6 @@ router.patch(
 
 router.delete('/:reviewId', verifyToken, removeReview);
 
-router.get('/:bookId', getReviewsByMovie);
+router.get('/:bookId', getReviewsByBook);
 
 export default router;
