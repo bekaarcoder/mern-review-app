@@ -12,6 +12,7 @@ export interface Author {
 }
 
 export interface Book {
+    id: string;
     title: string;
     description: string;
     author: Author;
@@ -27,10 +28,33 @@ export interface Book {
     reviews: string[];
 }
 
+export interface ReviewedBook {
+    id: string;
+    title: string;
+    cover: string;
+    averageRating: string;
+}
+
 class BookService {
     getBook(bookId: string) {
         const controller = new AbortController();
         const request = client.get<Book>(`/books/${bookId}`, {
+            signal: controller.signal,
+        });
+        return { request, cancel: () => controller.abort() };
+    }
+
+    getLatestBooks() {
+        const controller = new AbortController();
+        const request = client.get<Book[]>(`/books/latest`, {
+            signal: controller.signal,
+        });
+        return { request, cancel: () => controller.abort() };
+    }
+
+    getTopReviewedBooks() {
+        const controller = new AbortController();
+        const request = client.get<ReviewedBook[]>('/books/top-rated', {
             signal: controller.signal,
         });
         return { request, cancel: () => controller.abort() };

@@ -1,37 +1,45 @@
+import { CanceledError } from 'axios';
 import { useEffect, useState } from 'react';
-import { getTopReviewedBooks } from '../api/books';
+import bookService, { ReviewedBook } from '../services/book-service';
 import BookCard from './BookCard';
 
-type Book = {
-    id: string;
-    title: string;
-    cover: string;
-    averageRating: string;
-};
-
 const TopReviewedBooks = () => {
-    const [books, setBooks] = useState<Book[]>([]);
+    const [books, setBooks] = useState<ReviewedBook[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const fetchBooks = async () => {
-            const response = await getTopReviewedBooks();
-            if ('error' in response) {
-                console.log(response.error);
-            } else {
-                console.log(response.data);
+        setLoading(true);
+        const { request, cancel } = bookService.getTopReviewedBooks();
+        request
+            .then((response) => {
+                setLoading(false);
                 setBooks(response.data);
-            }
-        };
+            })
+            .catch((err) => {
+                if (err instanceof CanceledError) return;
+                console.log(err.message);
+                setLoading(false);
+            });
 
-        fetchBooks();
+        return () => cancel();
     }, []);
 
     return (
         <>
-            <h3 className="my-4">Top Reviewed Books</h3>
+            {loading && (
+                <h3 className="my-4 placeholder-glow">
+                    <span className="placeholder col-3"></span>
+                </h3>
+            )}
             <div className="row">
-                {books.length &&
-                    books.map((book) => <BookCard book={book} key={book.id} />)}
+                {books.length > 0 && (
+                    <>
+                        <h3 className="my-4">Top Reviewed Books</h3>
+                        {books.map((book) => (
+                            <BookCard book={book} key={book.id} />
+                        ))}
+                    </>
+                )}
             </div>
         </>
     );

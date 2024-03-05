@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { genres } from '../util/genres';
+import { status } from '../util/readingStatus';
 
 export const signUpBodyValidator = [
     check('username')
@@ -141,6 +142,14 @@ export const reviewBodyValidator = [
     check('rating')
         .isFloat({ min: 1, max: 5 })
         .withMessage('Please provide a rating between 1 and 5'),
+];
+
+export const shelfBodyValidator = [
+    check('name').trim().notEmpty().withMessage('Shelf name is required'),
+];
+
+export const readingStatusValidator = [
+    check('status').isIn(status).withMessage('Invalid value for status'),
 ];
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {
