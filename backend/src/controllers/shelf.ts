@@ -118,3 +118,58 @@ export const updateReadingStatus = async (
         next(error);
     }
 };
+
+export const getReadingStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookId } = req.params;
+
+        if (!isValidObjectId) throw createHttpError(400, 'Invalid Book Id');
+
+        const book = await Book.findById(bookId);
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        const readingStatus = await ReadingStatus.findOne({
+            book: book._id,
+            user: req.userId,
+        });
+        if (!readingStatus) {
+            res.status(200).json({ status: null });
+        } else {
+            res.status(200).json(readingStatus);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeReadingStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookId } = req.params;
+
+        if (!isValidObjectId) throw createHttpError(400, 'Invalid Book Id');
+
+        const book = await Book.findById(bookId);
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        const readingStatus = await ReadingStatus.findOne({
+            book: book._id,
+            user: req.userId,
+        });
+        if (!readingStatus) {
+            throw createHttpError(404, 'Book not found in your shelf');
+        }
+
+        await readingStatus.deleteOne();
+        res.status(200).json({ message: 'Book removed from shelf' });
+    } catch (error) {
+        next(error);
+    }
+};

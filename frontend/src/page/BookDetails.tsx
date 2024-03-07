@@ -1,16 +1,16 @@
 import { CanceledError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import BookDetailsPlaceholder from '../components/BookDetailsPlaceholder';
+import BookReviews from '../components/BookReviews';
 import Rating from '../components/Rating';
+import ReadingStatus from '../components/ReadingStatus';
 import ReviewModal from '../components/ReviewModal';
 import { formatDate } from '../config/helper';
+import { useAppContext } from '../hooks/useAppContext';
+import { useBookDetailContext } from '../hooks/useBookDetailContext';
 import bookService, { Book } from '../services/book-service';
 import reviewService, { ReviewFormData } from '../services/review-service';
-import BookReviews from '../components/BookReviews';
-import { useBookDetailContext } from '../hooks/useBookDetailContext';
-import { useAppContext } from '../hooks/useAppContext';
 
 const BookDetails = () => {
     const { bookId } = useParams();
@@ -22,18 +22,9 @@ const BookDetails = () => {
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState('');
-    const [show, setShow] = useState<boolean>(false);
     const [showReviewModal, setShowReviewModal] = useState<boolean>(false);
     const [showUpdateReviewModal, setShowUpdateReviewModal] =
         useState<boolean>(false);
-
-    const handleClose = () => {
-        setShow(false);
-    };
-
-    const handleShow = () => {
-        setShow(true);
-    };
 
     const handleCloseReviewModal = () => {
         setShowReviewModal(false);
@@ -96,16 +87,7 @@ const BookDetails = () => {
                             className="img-fluid rounded mx-auto d-block"
                             width={'60%'}
                         />
-                        <div className="btn-group">
-                            <button type="button" className="btn btn-success">
-                                Want to read
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-success dropdown-toggle dropdown-toggle-split"
-                                onClick={handleShow}
-                            ></button>
-                        </div>
+                        {loggedInUser && <ReadingStatus bookId={book._id} />}
                         {loggedInUser &&
                             (userReview ? (
                                 <>
@@ -175,35 +157,6 @@ const BookDetails = () => {
                         <h3>Ratings & Reviews</h3>
                         {bookId && <BookReviews bookId={bookId} />}
                     </div>
-
-                    <Modal show={show} onHide={handleClose} centered>
-                        <Modal.Header closeButton></Modal.Header>
-                        <Modal.Body>
-                            <h4 className="text-center">
-                                Choose a shelf for this book
-                            </h4>
-                            <div className="d-flex flex-column gap-3">
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-dark"
-                                >
-                                    Want to read
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-dark"
-                                >
-                                    Currently reading
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-dark"
-                                >
-                                    Read
-                                </button>
-                            </div>
-                        </Modal.Body>
-                    </Modal>
 
                     <ReviewModal
                         showReviewModal={showReviewModal}

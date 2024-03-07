@@ -3,6 +3,8 @@ import { verifyToken } from '../middlewares/auth';
 import {
     addBookToShelf,
     addShelf,
+    getReadingStatus,
+    removeReadingStatus,
     updateReadingStatus,
 } from '../controllers/shelf';
 import {
@@ -24,5 +26,9 @@ router.post(
     validate,
     updateReadingStatus
 );
+
+router.get('/status/:bookId', verifyToken, getReadingStatus);
+
+router.delete('/remove/:bookId', verifyToken, removeReadingStatus);
 
 export default router;
