@@ -3,6 +3,8 @@ import { verifyToken } from '../middlewares/auth';
 import {
     addBookToShelf,
     addShelf,
+    getBookShelvesCount,
+    getBooksByReadingShelf,
     getReadingStatus,
     removeReadingStatus,
     updateReadingStatus,
@@ -30,5 +32,9 @@ router.post(
 router.get('/status/:bookId', verifyToken, getReadingStatus);
 
 router.delete('/remove/:bookId', verifyToken, removeReadingStatus);
+
+router.get('/count', verifyToken, getBookShelvesCount);
+
+router.get('/readingShelf', verifyToken, getBooksByReadingShelf);
 
 export default router;

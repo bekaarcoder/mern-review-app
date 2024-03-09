@@ -160,14 +160,16 @@ const ReadingStatus = ({ bookId }: Props) => {
                             )}{' '}
                             Read
                         </button>
-                        <button
-                            type="button"
-                            className="btn btn-link text-danger text-decoration-none"
-                            onClick={handleDeleteStatus}
-                        >
-                            <i className="bi bi-trash3-fill"></i> Remove from my
-                            shelf
-                        </button>
+                        {readingStatus && (
+                            <button
+                                type="button"
+                                className="btn btn-link text-danger text-decoration-none"
+                                onClick={handleDeleteStatus}
+                            >
+                                <i className="bi bi-trash3-fill"></i> Remove
+                                from my shelf
+                            </button>
+                        )}
                     </div>
                 </Modal.Body>
             </Modal>

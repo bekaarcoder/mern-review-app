@@ -20,6 +20,7 @@ import { BookContextProvider } from './context/BookContext';
 import { AuthorContextProvider } from './context/AuthorContext';
 import BookDetails from './page/BookDetails';
 import { BookDetailContextProvider } from './context/BookDetailContext';
+import MyBooks from './page/MyBooks';
 
 const router = createBrowserRouter([
     {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
                         <BookDetails />
                     </BookDetailContextProvider>
                 ),
+            },
+            {
+                path: 'mybooks',
+                element: <MyBooks />,
             },
             {
                 path: 'sign-in',

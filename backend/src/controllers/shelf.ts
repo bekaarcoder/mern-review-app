@@ -173,3 +173,62 @@ export const removeReadingStatus = async (
         next(error);
     }
 };
+
+export const getBookShelvesCount = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const all = await ReadingStatus.countDocuments();
+        const wantToRead = await ReadingStatus.countDocuments({
+            status: 'Want To Read',
+        });
+        const read = await ReadingStatus.countDocuments({ status: 'Read' });
+        const currentlyReading = await ReadingStatus.countDocuments({
+            status: 'Currently Reading',
+        });
+        res.status(200).json({ all, wantToRead, read, currentlyReading });
+    } catch (error) {
+        next(error);
+    }
+};
+
+interface ShelfQuery {
+    user: string;
+    status?: string;
+}
+
+export const getBooksByReadingShelf = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { shelf } = req.query;
+        const validShelves = ['Currently Reading', 'Read', 'Want To Read'];
+
+        const query: ShelfQuery = { user: req.userId };
+
+        if (
+            shelf !== undefined &&
+            shelf !== null &&
+            shelf !== '' &&
+            validShelves.includes(shelf.toString())
+        ) {
+            query.status = shelf.toString();
+        }
+
+        const bookShelves = await ReadingStatus.find(query).populate({
+            path: 'book',
+            select: 'title cover',
+            populate: {
+                path: 'author',
+                select: 'name',
+            },
+        });
+        res.status(200).json(bookShelves);
+    } catch (error) {
+        next(error);
+    }
+};
