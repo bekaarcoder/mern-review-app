@@ -60,7 +60,7 @@ const LatestBooks = () => {
                         <h3 className="my-4">Latest Books</h3>
                         <Carousel indicators={false}>
                             {books.map((book) => (
-                                <Carousel.Item key={book.id}>
+                                <Carousel.Item key={book._id}>
                                     <div className="bg-light p-2 d-flex justify-content-center gap-5 align-items-center">
                                         <img
                                             src={book.cover.url}
@@ -76,7 +76,7 @@ const LatestBooks = () => {
                                                 {book.author.name}
                                             </p>
                                             <Link
-                                                to={`/books/${book.id}`}
+                                                to={`/books/${book._id}`}
                                                 className="btn btn-outline-warning btn-sm"
                                             >
                                                 View Book Details

@@ -4,7 +4,7 @@ import bookshelfService, {
 } from '../services/bookshelf-service';
 import { CanceledError } from 'axios';
 import { formatDate } from '../config/helper';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import ReadingStatusCount from '../components/ReadingStatusCount';
 
 export type ReadingShelf =
@@ -19,7 +19,6 @@ const MyBooks = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const handleSearchParam = (shelf: ReadingShelf) => {
-        console.log(shelf);
         setSearchParams({ shelf: shelf });
     };
 
@@ -27,6 +26,7 @@ const MyBooks = () => {
         const shelf = searchParams.get('shelf')
             ? searchParams.get('shelf')
             : 'All';
+        setSearchParams({ shelf: shelf! });
         const { request, cancel } = bookshelfService.getBookByReadingShelf(
             shelf!
         );
@@ -41,7 +41,7 @@ const MyBooks = () => {
             });
 
         return () => cancel();
-    }, [searchParams]);
+    }, [searchParams, setSearchParams]);
 
     return (
         <div className="row my-5">
@@ -74,7 +74,14 @@ const MyBooks = () => {
                                         width={50}
                                     />
                                 </td>
-                                <td>{shelfBook.book.title}</td>
+                                <td>
+                                    <Link
+                                        to={`/books/${shelfBook.book._id}`}
+                                        className="text-decoration-none text-reset"
+                                    >
+                                        {shelfBook.book.title}
+                                    </Link>
+                                </td>
                                 <td>{shelfBook.book.author.name}</td>
                                 <td>{shelfBook.status}</td>
                                 <td>{formatDate(shelfBook.updatedAt)}</td>

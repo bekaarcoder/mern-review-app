@@ -347,6 +347,26 @@ export const getTopRatedBooks = async (
     }
 };
 
+type SearchQuery = {
+    title: string;
+};
+
+export const searchBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const query = req.query as SearchQuery;
+    try {
+        const result = await Book.find({
+            title: { $regex: query.title, $options: 'i' },
+        }).populate('author');
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default async function uploadCoverImage(imageFile: Express.Multer.File) {
     const { secure_url, public_id } = await cloudinary.uploader.upload(
         imageFile.path

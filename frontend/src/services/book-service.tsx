@@ -59,6 +59,12 @@ class BookService {
         });
         return { request, cancel: () => controller.abort() };
     }
+
+    searchBook(query: string) {
+        const queryParams = new URLSearchParams();
+        queryParams.append('title', query.toString());
+        return client.get<Book[]>(`/books/search?${queryParams.toString()}`);
+    }
 }
 
 export default new BookService();

@@ -4,6 +4,7 @@ import bookshelfService, {
     ReadingShelfCount,
 } from '../services/bookshelf-service';
 import { CanceledError } from 'axios';
+import { useSearchParams } from 'react-router-dom';
 
 interface Props {
     handleSearchParam: (shelf: ReadingShelf) => void;
@@ -12,6 +13,12 @@ interface Props {
 const ReadingStatusCount = ({ handleSearchParam }: Props) => {
     const [count, setCount] = useState<ReadingShelfCount | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const [searchParams] = useSearchParams();
+
+    const isActive = (shelf: string) => {
+        return searchParams.get('shelf') === shelf;
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -50,23 +57,36 @@ const ReadingStatusCount = ({ handleSearchParam }: Props) => {
 
     return (
         <>
-            <div className="link" onClick={() => handleSearchParam('All')}>
+            <div
+                className={`link ${
+                    isActive('All') ? 'text-dark' : 'text-secondary'
+                }`}
+                onClick={() => handleSearchParam('All')}
+            >
                 All ({count?.all})
             </div>
             <div
-                className="link text-secondary"
+                className={`link ${
+                    isActive('Read') ? 'text-dark' : 'text-secondary'
+                }`}
                 onClick={() => handleSearchParam('Read')}
             >
                 Read ({count?.read})
             </div>
             <div
-                className="link text-secondary"
+                className={`link ${
+                    isActive('Currently Reading')
+                        ? 'text-dark'
+                        : 'text-secondary'
+                }`}
                 onClick={() => handleSearchParam('Currently Reading')}
             >
                 Currently Reading ({count?.currentlyReading})
             </div>
             <div
-                className="link text-secondary"
+                className={`link ${
+                    isActive('Want To Read') ? 'text-dark' : 'text-secondary'
+                }`}
                 onClick={() => handleSearchParam('Want To Read')}
             >
                 Want To Read ({count?.wantToRead})

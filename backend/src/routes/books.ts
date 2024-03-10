@@ -9,6 +9,7 @@ import {
     getLatestBooks,
     getRelatedBooks,
     getTopRatedBooks,
+    searchBook,
     updateBookCover,
     updateBookDetails,
 } from '../controllers/books';
@@ -56,6 +57,8 @@ router.patch(
 router.delete('/delete/:bookId', verifyToken, isAdmin, deleteBook);
 
 router.get('/top-rated', getTopRatedBooks);
+
+router.get('/search', searchBook);
 
 router.get('/:bookId', getBook);
 
