@@ -240,7 +240,7 @@ export const getLatestBooks = async (
             .sort({ createdAt: 'desc' })
             .limit(5);
         const books = results.map((book) => ({
-            id: book._id,
+            _id: book._id,
             title: book.title,
             author: book.author,
             cover: book.cover,

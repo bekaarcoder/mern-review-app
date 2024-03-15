@@ -2,10 +2,19 @@ import { Link } from 'react-router-dom';
 import BookList from '../../components/BookList';
 import StatsCard from '../../components/StatsCard';
 import { useBookContext } from '../../hooks/useBookContext';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import dashboardService, {
+    ResourceCount,
+} from '../../services/dashboard-service';
+import { CanceledError } from 'axios';
+import StatusCardPlaceholder from '../../components/StatusCardPlaceholder';
 
 const AdminDashboard = () => {
     const { books, fetchBooks } = useBookContext();
+    const [resourceCount, setResourceCount] = useState<ResourceCount | null>(
+        null
+    );
+    const [loading, setLoading] = useState<boolean>(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const memoizedFetchBooks = useCallback(fetchBooks, []);
@@ -13,6 +22,22 @@ const AdminDashboard = () => {
     useEffect(() => {
         memoizedFetchBooks(0, 3);
     }, [memoizedFetchBooks]);
+
+    useEffect(() => {
+        setLoading(true);
+        const { request, cancel } = dashboardService.getResourceCount();
+        request
+            .then((response) => {
+                setResourceCount(response.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                if (err instanceof CanceledError) return;
+                console.log(err.message);
+                setLoading(false);
+            });
+        return () => cancel();
+    }, []);
 
     return (
         <div className="row">
@@ -53,10 +78,35 @@ const AdminDashboard = () => {
             </div>
             <div className="col-md-12 my-4">
                 <div className="row justify-content-center">
-                    <StatsCard title="Books" subTitle="100" />
-                    <StatsCard title="Authors" subTitle="100" />
-                    <StatsCard title="Reviews" subTitle="100" />
-                    <StatsCard title="Users" subTitle="100" />
+                    {loading && (
+                        <>
+                            <StatusCardPlaceholder />
+                            <StatusCardPlaceholder />
+                            <StatusCardPlaceholder />
+                            <StatusCardPlaceholder />
+                        </>
+                    )}
+
+                    {!loading && resourceCount && (
+                        <>
+                            <StatsCard
+                                title="Books"
+                                subTitle={resourceCount.books}
+                            />
+                            <StatsCard
+                                title="Authors"
+                                subTitle={resourceCount.authors}
+                            />
+                            <StatsCard
+                                title="Reviews"
+                                subTitle={resourceCount.reviews}
+                            />
+                            <StatsCard
+                                title="Users"
+                                subTitle={resourceCount.users}
+                            />
+                        </>
+                    )}
                 </div>
             </div>
             <div className="col-md-12">

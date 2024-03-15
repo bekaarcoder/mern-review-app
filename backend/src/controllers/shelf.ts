@@ -180,13 +180,19 @@ export const getBookShelvesCount = async (
     next: NextFunction
 ) => {
     try {
-        const all = await ReadingStatus.countDocuments();
+        const query = { user: req.userId };
+        const all = await ReadingStatus.countDocuments(query);
         const wantToRead = await ReadingStatus.countDocuments({
             status: 'Want To Read',
+            ...query,
         });
-        const read = await ReadingStatus.countDocuments({ status: 'Read' });
+        const read = await ReadingStatus.countDocuments({
+            status: 'Read',
+            ...query,
+        });
         const currentlyReading = await ReadingStatus.countDocuments({
             status: 'Currently Reading',
+            ...query,
         });
         res.status(200).json({ all, wantToRead, read, currentlyReading });
     } catch (error) {

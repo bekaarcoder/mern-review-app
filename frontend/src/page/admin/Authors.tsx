@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { FormEvent, MouseEvent, useState } from 'react';
 import AuthorList from '../../components/AuthorList';
 import Pagination from '../../components/Pagination';
 import { useAuthorContext } from '../../hooks/useAuthorContext';
@@ -14,6 +14,8 @@ type Pagination = {
 const Authors = () => {
     const { authors, pagination, setCurrentPage } = useAuthorContext();
 
+    const [searchQuery, setSearchQuery] = useState<string>('');
+
     const handleNext = (e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         setCurrentPage((prev) => prev + 1);
@@ -24,10 +26,29 @@ const Authors = () => {
         setCurrentPage((prev) => prev - 1);
     };
 
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (searchQuery !== '') {
+            console.log(searchQuery);
+        }
+    };
+
     return (
         <div className="row my-4">
             <div className="col-md-12">
-                <h3 className="my-3 display-5">Authors</h3>
+                <div className="d-flex justify-content-between align-items-center">
+                    <h3 className="my-3 display-5">Authors</h3>
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            type="search"
+                            name="search"
+                            className="form-control"
+                            placeholder="Search Author"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </form>
+                </div>
                 {authors && <AuthorList authors={authors} />}
                 {pagination && (
                     <Pagination

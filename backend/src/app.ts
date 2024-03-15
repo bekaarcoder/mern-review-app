@@ -10,6 +10,7 @@ import authorRoutes from './routes/author';
 import bookRoutes from './routes/books';
 import reviewRoutes from './routes/review';
 import shelfRoutes from './routes/shelf';
+import dashboardRoutes from './routes/dashboard';
 import createHttpError, { isHttpError } from 'http-errors';
 import env from './util/validateEnv';
 
@@ -38,6 +39,7 @@ app.use('/api/authors', authorRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/shelves', shelfRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

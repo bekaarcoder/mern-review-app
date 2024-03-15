@@ -53,43 +53,57 @@ const MyBooks = () => {
                 </div>
             </div>
             <div className="col-md-10">
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Cover</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Shelf</th>
-                            <th>Date Added</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {shelfBooks.map((shelfBook) => (
-                            <tr key={shelfBook._id}>
-                                <td>
-                                    <img
-                                        src={shelfBook.book.cover.url}
-                                        alt={shelfBook.book.title}
-                                        width={50}
-                                    />
-                                </td>
-                                <td>
-                                    <Link
-                                        to={`/books/${shelfBook.book._id}`}
-                                        className="text-decoration-none text-reset"
-                                    >
-                                        {shelfBook.book.title}
-                                    </Link>
-                                </td>
-                                <td>{shelfBook.book.author.name}</td>
-                                <td>{shelfBook.status}</td>
-                                <td>{formatDate(shelfBook.updatedAt)}</td>
-                                <td></td>
+                {shelfBooks.length < 1 ? (
+                    <>
+                        <p className="lead text-center">
+                            Uh oh! Your bookshelf's feeling a bit lonely... It's
+                            time to sprinkle some bookish magic! 📚✨
+                        </p>
+                        <div className="text-center my-2">
+                            <Link className="btn btn-outline-dark" to="/">
+                                Explore Books
+                            </Link>
+                        </div>
+                    </>
+                ) : (
+                    <table className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cover</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Shelf</th>
+                                <th>Date Added</th>
+                                <th></th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {shelfBooks.map((shelfBook) => (
+                                <tr key={shelfBook._id}>
+                                    <td>
+                                        <img
+                                            src={shelfBook.book.cover.url}
+                                            alt={shelfBook.book.title}
+                                            width={50}
+                                        />
+                                    </td>
+                                    <td>
+                                        <Link
+                                            to={`/books/${shelfBook.book._id}`}
+                                            className="text-decoration-none text-reset"
+                                        >
+                                            {shelfBook.book.title}
+                                        </Link>
+                                    </td>
+                                    <td>{shelfBook.book.author.name}</td>
+                                    <td>{shelfBook.status}</td>
+                                    <td>{formatDate(shelfBook.updatedAt)}</td>
+                                    <td></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );

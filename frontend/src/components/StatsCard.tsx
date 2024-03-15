@@ -1,6 +1,6 @@
 interface Props {
     title: string;
-    subTitle: string;
+    subTitle: number;
 }
 
 const StatsCard = ({ title, subTitle }: Props) => {
