@@ -1,8 +1,10 @@
 import { CanceledError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import dummy from '../assets/dummy.jpg';
 import BookDetailsPlaceholder from '../components/BookDetailsPlaceholder';
 import BookReviews from '../components/BookReviews';
+import ExpandableText from '../components/ExpandableText';
 import Rating from '../components/Rating';
 import ReadingStatus from '../components/ReadingStatus';
 import ReviewModal from '../components/ReviewModal';
@@ -154,7 +156,26 @@ const BookDetails = () => {
                             {formatDate(book.publishedDate)}
                         </p>
                         <hr />
-                        <h3>Ratings & Reviews</h3>
+                        <h4>About the author</h4>
+                        <div className="d-flex gap-4 mt-3">
+                            <img
+                                src={
+                                    book.author.avatar
+                                        ? book.author.avatar.url
+                                        : dummy
+                                }
+                                alt={book.author.name}
+                                className="rounded-circle"
+                                width={75}
+                                height={75}
+                            />
+                            <div>
+                                <h6>{book.author.name}</h6>
+                                <ExpandableText children={book.author.about} />
+                            </div>
+                        </div>
+                        <hr />
+                        <h4>Ratings & Reviews</h4>
                         {bookId && <BookReviews bookId={bookId} />}
                     </div>
 
