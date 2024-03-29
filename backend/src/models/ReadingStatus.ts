@@ -18,6 +18,10 @@ const readingStatusSchema = new Schema(
             ref: 'Book',
             required: true,
         },
+        completionPercentage: {
+            type: Number,
+            required: false,
+        },
     },
     {
         timestamps: true,

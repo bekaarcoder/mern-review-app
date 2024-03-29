@@ -7,9 +7,11 @@ import {
     getBooksByReadingShelf,
     getReadingStatus,
     removeReadingStatus,
+    updateReadingProgress,
     updateReadingStatus,
 } from '../controllers/shelf';
 import {
+    readingProgressValidator,
     readingStatusValidator,
     shelfBodyValidator,
     validate,
@@ -36,5 +38,13 @@ router.delete('/remove/:bookId', verifyToken, removeReadingStatus);
 router.get('/count', verifyToken, getBookShelvesCount);
 
 router.get('/readingShelf', verifyToken, getBooksByReadingShelf);
+
+router.post(
+    '/update-progress/:bookId',
+    verifyToken,
+    readingProgressValidator,
+    validate,
+    updateReadingProgress
+);
 
 export default router;

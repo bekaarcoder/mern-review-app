@@ -20,6 +20,7 @@ export interface ReadingShelfBook {
             url: string;
         };
     };
+    completionPercentage?: number;
 }
 
 export interface ReadingShelfCount {
@@ -27,6 +28,10 @@ export interface ReadingShelfCount {
     wantToRead: number;
     read: number;
     currentlyReading: number;
+}
+
+export interface ReadingProgress {
+    progress: number;
 }
 
 class BookShelfService {
@@ -41,6 +46,12 @@ class BookShelfService {
 
     updateReadingStatus(bookId: string, data: ReadingStatus) {
         return client.post(`/shelves/update-status/${bookId}`, data, {
+            withCredentials: true,
+        });
+    }
+
+    updateReadingProgress(bookId: string, data: ReadingProgress) {
+        return client.post(`/shelves/update-progress/${bookId}`, data, {
             withCredentials: true,
         });
     }

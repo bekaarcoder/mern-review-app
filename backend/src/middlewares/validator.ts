@@ -152,6 +152,12 @@ export const readingStatusValidator = [
     check('status').isIn(status).withMessage('Invalid value for status'),
 ];
 
+export const readingProgressValidator = [
+    check('progress')
+        .isInt({ min: 1, max: 100 })
+        .withMessage('Number must be between 1 and 100'),
+];
+
 export const validate = (req: Request, res: Response, next: NextFunction) => {
     const error = validationResult(req).array();
     if (error.length) {

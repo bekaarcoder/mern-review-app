@@ -238,3 +238,37 @@ export const getBooksByReadingShelf = async (
         next(error);
     }
 };
+
+export const updateReadingProgress = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { bookId } = req.params;
+        const { progress } = req.body;
+
+        if (!isValidObjectId(bookId)) {
+            throw createHttpError(400, 'Invalid Book Id');
+        }
+
+        const book = await Book.findById(bookId);
+        if (!book) throw createHttpError(404, 'Book not found');
+
+        const bookStatus = await ReadingStatus.findOne({
+            book: book._id,
+            user: req.userId,
+            status: 'Currently Reading',
+        });
+
+        if (!bookStatus)
+            throw createHttpError(404, 'Book not found in your shelf');
+
+        bookStatus.completionPercentage = progress;
+        await bookStatus.save();
+
+        res.status(200).json(bookStatus);
+    } catch (error) {
+        next(error);
+    }
+};

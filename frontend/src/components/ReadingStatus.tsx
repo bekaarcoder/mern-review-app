@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
-import bookshelfService, { ReadingStatus } from '../services/bookshelf-service';
+import bookshelfService, {
+    ReadingStatus as BookReadingStatus,
+} from '../services/bookshelf-service';
 import { CanceledError } from 'axios';
 import { useAppContext } from '../hooks/useAppContext';
 
@@ -13,9 +15,8 @@ type ReadStatus = 'Read' | 'Currently Reading' | 'Want To Read';
 const ReadingStatus = ({ bookId }: Props) => {
     const { showToast } = useAppContext();
 
-    const [readingStatus, setReadingStatus] = useState<ReadingStatus | null>(
-        null
-    );
+    const [readingStatus, setReadingStatus] =
+        useState<BookReadingStatus | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [show, setShow] = useState<boolean>(false);
 
