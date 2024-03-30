@@ -16,6 +16,7 @@ const CurrentlyReadingBook = ({ book }: Props) => {
     const [progress, setProgress] = useState<string | undefined>(
         book.completionPercentage?.toString()
     );
+    const [progressType, setProgressType] = useState<string>('percentage');
 
     const handleClose = () => {
         setShow(false);
@@ -28,9 +29,18 @@ const CurrentlyReadingBook = ({ book }: Props) => {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (progress) {
+            let progressPercentage = parseInt(progress);
+            if (
+                progressType === 'pages' &&
+                parseInt(progress) <= book.book.pages
+            ) {
+                progressPercentage = Math.ceil(
+                    (parseInt(progress) / book.book.pages) * 100
+                );
+            }
             bookshelfService
                 .updateReadingProgress(book.book._id, {
-                    progress: parseInt(progress),
+                    progress: progressPercentage,
                 })
                 .then((response) => {
                     console.log(response.data);
@@ -38,7 +48,7 @@ const CurrentlyReadingBook = ({ book }: Props) => {
                         message: 'Reading progress updated',
                         type: 'SUCCESS',
                     });
-                    setReadingProgress(parseInt(progress));
+                    setReadingProgress(progressPercentage);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -99,7 +109,9 @@ const CurrentlyReadingBook = ({ book }: Props) => {
                         <div className="col-12">
                             <label className="visually-hidden">Progress</label>
                             <div className="input-group">
-                                <div className="input-group-text">%</div>
+                                <div className="input-group-text">
+                                    {progressType === 'percentage' ? '%' : '#'}
+                                </div>
                                 <input
                                     type="number"
                                     className="form-control"
@@ -109,6 +121,11 @@ const CurrentlyReadingBook = ({ book }: Props) => {
                                         setProgress(e.target.value)
                                     }
                                 />
+                                {progressType === 'pages' && (
+                                    <div className="input-group-text">
+                                        of {book.book.pages}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -116,7 +133,14 @@ const CurrentlyReadingBook = ({ book }: Props) => {
                             <label className="visually-hidden">
                                 Progress Type
                             </label>
-                            <select className="form-select" name="progressType">
+                            <select
+                                className="form-select"
+                                name="progressType"
+                                value={progressType}
+                                onChange={(e) =>
+                                    setProgressType(e.target.value)
+                                }
+                            >
                                 <option value="percentage">%</option>
                                 <option value="pages">Pages</option>
                             </select>

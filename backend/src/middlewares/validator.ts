@@ -71,6 +71,12 @@ export const bookBodyValidator = [
     check('author').trim().notEmpty().withMessage('Book author is required'),
     check('publishedDate').isDate().withMessage('Published date is required'),
     check('language').trim().notEmpty().withMessage('Language is required'),
+    check('pages')
+        .trim()
+        .notEmpty()
+        .withMessage('Pages are required')
+        .isInt()
+        .withMessage('Must be a valid integer'),
     check('type').trim().notEmpty().withMessage('Book type is required'),
     check('status')
         .isIn(['private', 'public'])
@@ -111,6 +117,12 @@ export const bookUpdateBodyValidator = [
     check('author').trim().notEmpty().withMessage('Book author is required'),
     check('publishedDate').isDate().withMessage('Published date is required'),
     check('language').trim().notEmpty().withMessage('Language is required'),
+    check('pages')
+        .trim()
+        .notEmpty()
+        .withMessage('Pages are required')
+        .isInt()
+        .withMessage('Must be a valid integer'),
     check('type').trim().notEmpty().withMessage('Book type is required'),
     check('status')
         .isIn(['private', 'public'])

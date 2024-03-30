@@ -227,7 +227,7 @@ export const getBooksByReadingShelf = async (
 
         const bookShelves = await ReadingStatus.find(query).populate({
             path: 'book',
-            select: 'title cover',
+            select: 'title cover pages',
             populate: {
                 path: 'author',
                 select: 'name',

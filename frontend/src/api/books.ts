@@ -70,6 +70,7 @@ export interface BookData {
     author: string;
     publishedDate: string;
     status: string;
+    pages: string;
     type: string;
     genres: string[];
     tags: string[];

@@ -16,6 +16,7 @@ type BookFormData = {
     author: string;
     publishedDate: string;
     status: string;
+    pages: number;
     type: string;
     genres: string[];
     tags: string;
@@ -79,6 +80,7 @@ const ManageBookForm = ({ bookData, onSave }: Props) => {
 
         formData.append('language', data.language);
         formData.append('status', data.status);
+        formData.append('pages', data.pages.toString());
         if (!bookData) formData.append('cover', data.cover[0]);
 
         const response = await onSave(formData);
@@ -111,7 +113,7 @@ const ManageBookForm = ({ bookData, onSave }: Props) => {
 
     const onKeyUp = async () => {
         const inputValue = watch('author');
-        console.log(inputValue);
+        console.log('Value', inputValue);
         setLoading(true);
         const response = await searchAuthor({ name: inputValue });
         if ('error' in response) {
@@ -120,7 +122,7 @@ const ManageBookForm = ({ bookData, onSave }: Props) => {
             setSearchResults([]);
             setShowResult(false);
         } else {
-            setShowResult(response.data.length > 0);
+            setShowResult(response.data.length > 0 && inputValue !== '');
             setSearchResults(response.data);
         }
         setLoading(false);
@@ -239,7 +241,14 @@ const ManageBookForm = ({ bookData, onSave }: Props) => {
                         </div>
                     )}
                 </div>
-
+                <TextInputField
+                    name="pages"
+                    type="number"
+                    label="Pages"
+                    register={register}
+                    registerOptions={{ required: 'Book pages is required' }}
+                    error={errors.pages}
+                />
                 <TextInputField
                     name="tags"
                     type="text"

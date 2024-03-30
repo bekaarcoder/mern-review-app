@@ -12,6 +12,7 @@ export interface ReadingShelfBook {
     book: {
         _id: string;
         title: string;
+        pages: number;
         author: {
             _id: string;
             name: string;

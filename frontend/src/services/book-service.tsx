@@ -19,6 +19,7 @@ export interface Book {
     publishedDate: string;
     status: string;
     type: string;
+    pages: number;
     genres: string[];
     tags: string[];
     language: string;

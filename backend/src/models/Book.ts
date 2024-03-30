@@ -28,6 +28,10 @@ const bookSchema = new Schema(
             required: true,
             enum: ['public', 'private'],
         },
+        pages: {
+            type: Number,
+            required: true,
+        },
         type: {
             type: String,
             required: true,

@@ -11,6 +11,7 @@ type BookType = {
     description: string;
     author: string;
     publishedDate: Date;
+    pages: number;
     status: 'public' | 'private';
     type: string;
     genres: string[];
@@ -83,6 +84,7 @@ export const updateBookDetails = async (
         book.genres = bookDetails.genres;
         book.tags = bookDetails.tags;
         book.language = bookDetails.language;
+        book.pages = bookDetails.pages;
 
         const updatedBook = await book.save();
         res.status(200).json(updatedBook);
