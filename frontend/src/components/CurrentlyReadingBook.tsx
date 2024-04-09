@@ -63,8 +63,8 @@ const CurrentlyReadingBook = ({ book }: Props) => {
 
     return (
         <>
-            <div className="col-md-4" key={book._id}>
-                <div className="card">
+            <div className=" col-sm-6 col-md-6 col-lg-4 my-2" key={book._id}>
+                <div className="card h-100">
                     <div className="card-body d-flex gap-3 align-items-center">
                         <img
                             src={book.book.cover.url}

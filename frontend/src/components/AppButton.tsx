@@ -1,11 +1,16 @@
 interface Props {
     label: string;
     disabled: boolean;
+    loading?: boolean;
 }
 
-const AppButton = ({ label, disabled }: Props) => {
+const AppButton = ({ label, disabled, loading }: Props) => {
     return (
-        <button className="btn btn-dark" type="submit" disabled={disabled}>
+        <button
+            className="btn btn-dark"
+            type="submit"
+            disabled={disabled || loading}
+        >
             {disabled ? (
                 <>
                     <span
@@ -14,6 +19,16 @@ const AppButton = ({ label, disabled }: Props) => {
                     ></span>
                     <span role="status" className="ms-1">
                         Saving...
+                    </span>
+                </>
+            ) : loading ? (
+                <>
+                    <span
+                        className="spinner-border spinner-border-sm"
+                        aria-hidden="true"
+                    ></span>
+                    <span role="status" className="ms-1">
+                        {label}
                     </span>
                 </>
             ) : (

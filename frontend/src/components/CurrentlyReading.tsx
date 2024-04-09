@@ -4,8 +4,10 @@ import bookshelfService, {
     ReadingShelfBook,
 } from '../services/bookshelf-service';
 import CurrentlyReadingBook from './CurrentlyReadingBook';
+import { useAppContext } from '../hooks/useAppContext';
 
 const CurrentlyReading = () => {
+    const { loggedInUser } = useAppContext();
     const [currentBooks, setCurrentBooks] = useState<ReadingShelfBook[]>([]);
 
     useEffect(() => {
@@ -25,7 +27,7 @@ const CurrentlyReading = () => {
         return () => cancel();
     }, []);
 
-    if (currentBooks.length === 0) return <></>;
+    if (currentBooks.length === 0 || !loggedInUser) return <></>;
 
     return (
         <>

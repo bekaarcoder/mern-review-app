@@ -63,6 +63,7 @@ const BookRow = ({ book }: Props) => {
                         style={{
                             height: '100px',
                             width: '100px',
+                            position: 'relative',
                         }}
                     >
                         <img
@@ -75,6 +76,14 @@ const BookRow = ({ book }: Props) => {
                                 objectPosition: 'center',
                             }}
                         />
+                        <div className="book-cover-foreground d-flex justify-content-center align-items-center">
+                            <Link
+                                to={`/admin/edit-book-cover/${book._id}`}
+                                className="text-decoration-none text-reset"
+                            >
+                                <i className="bi bi-image fs-4"></i>
+                            </Link>
+                        </div>
                     </div>
                 </td>
                 <td>

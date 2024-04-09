@@ -66,6 +66,16 @@ class BookService {
         queryParams.append('title', query.toString());
         return client.get<Book[]>(`/books/search?${queryParams.toString()}`);
     }
+
+    updateBookCover(bookCoverFormData: FormData, bookId: string) {
+        return client.patch(
+            `/books/update-book-cover/${bookId}`,
+            bookCoverFormData,
+            {
+                withCredentials: true,
+            }
+        );
+    }
 }
 
 export default new BookService();

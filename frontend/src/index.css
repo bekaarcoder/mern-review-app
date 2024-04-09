@@ -31,3 +31,19 @@ input[type=number]::-webkit-outer-spin-button {
   max-height: 300px;
   object-fit: contain;
 }
+
+.book-cover-foreground {
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #FFFFFF;
+  opacity: 0;
+  transition: all ease 0.2s;
+}
+
+.book-cover-foreground:hover {
+  opacity: 1;
+}
