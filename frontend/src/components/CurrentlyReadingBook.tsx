@@ -1,8 +1,9 @@
 import { FormEvent, useState } from 'react';
-import { ReadingShelfBook } from '../services/bookshelf-service';
-import { Modal } from 'react-bootstrap';
-import bookshelfService from '../services/bookshelf-service';
 import { useAppContext } from '../hooks/useAppContext';
+import bookshelfService, {
+    ReadingShelfBook,
+} from '../services/bookshelf-service';
+import UpdateProgressModal from './UpdateProgressModal';
 
 interface Props {
     book: ReadingShelfBook;
@@ -24,6 +25,18 @@ const CurrentlyReadingBook = ({ book }: Props) => {
 
     const handleShow = () => {
         setShow(true);
+    };
+
+    const markFinished = () => {
+        bookshelfService
+            .updateReadingStatus(book.book._id, { status: 'Read' })
+            .then((response) => {
+                console.log(response.data);
+                handleClose();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -99,65 +112,17 @@ const CurrentlyReadingBook = ({ book }: Props) => {
                 </div>
             </div>
 
-            <Modal show={show} onHide={handleClose} centered>
-                <Modal.Header closeButton>Update Progress</Modal.Header>
-                <Modal.Body>
-                    <form
-                        className="row row-cols-lg-auto g-3 align-items-center justify-content-center"
-                        onSubmit={handleSubmit}
-                    >
-                        <div className="col-12">
-                            <label className="visually-hidden">Progress</label>
-                            <div className="input-group">
-                                <div className="input-group-text">
-                                    {progressType === 'percentage' ? '%' : '#'}
-                                </div>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    name="progress"
-                                    value={progress}
-                                    onChange={(e) =>
-                                        setProgress(e.target.value)
-                                    }
-                                />
-                                {progressType === 'pages' && (
-                                    <div className="input-group-text">
-                                        of {book.book.pages}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="col-12">
-                            <label className="visually-hidden">
-                                Progress Type
-                            </label>
-                            <select
-                                className="form-select"
-                                name="progressType"
-                                value={progressType}
-                                onChange={(e) =>
-                                    setProgressType(e.target.value)
-                                }
-                            >
-                                <option value="percentage">%</option>
-                                <option value="pages">Pages</option>
-                            </select>
-                        </div>
-
-                        <div className="col-12">
-                            <button
-                                type="submit"
-                                className="btn btn-dark"
-                                disabled={!progress}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </form>
-                </Modal.Body>
-            </Modal>
+            <UpdateProgressModal
+                show={show}
+                handleClose={handleClose}
+                handleSubmit={handleSubmit}
+                progress={progress}
+                setProgress={setProgress}
+                progressType={progressType}
+                setProgressType={setProgressType}
+                pages={book.book.pages}
+                markFinished={markFinished}
+            />
         </>
     );
 };
